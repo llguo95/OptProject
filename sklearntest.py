@@ -45,7 +45,7 @@ des_grid = np.linspace(-2, 5, 100).reshape(-1, 1)
 x = X[0]
 
 n_features = 1
-k = 1
+k = 6
 for i in range(k):
     gpr_step = GaussianProcessRegressor().fit(X, y)
     mu_par, sigma_par = gpr_step.predict(np.array(x).reshape((1, n_features)), return_std=True)
@@ -67,14 +67,14 @@ axs1[0].fill_between(des_grid.flatten(), -y_pred.flatten() - 2 * sigma_pred, -y_
 axs1[0].scatter(X[:-1], -y[:-1], color='r')
 axs1[0].set_xlabel('x')
 axs1[0].set_ylabel('y')
-axs1[0].set_title('x*cos(x)')
+axs1[0].set_title('x*cos(x) BO iteration step %d' % k)
 axs1[0].set_ylim([-3.5, 2.75])
 
-gpr_step = GaussianProcessRegressor().fit(X, y)
-mu_par, sigma_par = gpr_step.predict(np.array(x).reshape((1, 1)), return_std=True)
-
-x = des_grid[np.argmax(acqEI(des_grid, gpr_step, X))]; y_step = f(x)
-X = np.append(X, x).reshape(-1, 1); y = np.append(y, y_step).reshape(-1, 1)
+# gpr_step = GaussianProcessRegressor().fit(X, y)
+# mu_par, sigma_par = gpr_step.predict(np.array(x).reshape((1, 1)), return_std=True)
+#
+# x = des_grid[np.argmax(acqEI(des_grid, gpr_step, X))]; y_step = f(x)
+# X = np.append(X, x).reshape(-1, 1); y = np.append(y, y_step).reshape(-1, 1)
 
 acq = acqEI(des_grid, gpr_step, X)
 axs1[1].plot(des_grid, acqEI(des_grid, gpr_step, X) / max(acqEI(des_grid, gpr_step, X)))
