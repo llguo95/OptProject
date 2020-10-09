@@ -21,21 +21,23 @@ x = 0.5
 
 X = np.array(x)
 y = np.array(f(x))
-k = 6
+k = 0
 for i in range(k):
     x = x - df(x) / d2f(x)
     X = np.append(X, x); y = np.append(y, f(x))
 
-des_grid = np.linspace(-1, 4.5, 100).reshape(-1, 1)
+des_grid = np.linspace(-2, 5, 100).reshape(-1, 1)
 
-noise = 0 # np.random.rand(100).reshape((100, 1))
+noise = np.random.rand(100).reshape((100, 1))
 
 plt.plot(des_grid, f(des_grid) + noise, '--')
-plt.scatter(X, y, color='r')
+# plt.scatter(X, y, color='r')
 plt.xlabel('x')
 plt.ylabel('y')
-plt.title('x*cos(x) Newton iteration step %d' % k)
+plt.title('x*cos(x) (noisy)')
 
 plt.grid()
+
+plt.savefig('noisy.png')
 
 plt.show()

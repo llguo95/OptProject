@@ -86,5 +86,5 @@ axs1[1].set_title('Expected improvement')
 plt.tight_layout()
 for ax in axs1: ax.grid()
 
-plt.savefig('step_%d.png' % k)
+plt.savefig('step_%d.png' % (k - 1))
 plt.show()
