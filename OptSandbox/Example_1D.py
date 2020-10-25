@@ -25,25 +25,27 @@ def acqUCB(x_par, gpr, X_train, kappa=.1):
     return mu_par.flatten() + kappa * sigma_par
 
 def f(x):
-    return -x * np.cos(x)
+    # x = 5 * x
+    return - x * np.cos(x)
 
 ### 1D
 X = np.array([[0.5]])
 y = f(X)
 
-des_grid = np.linspace(-2, 5, 100).reshape(-1, 1)
+des_grid = np.linspace(0, 5, 100).reshape(-1, 1)
 
 ### Loop
 
 x = X[0]
 
 n_features = 1
-k = 2
+k = 3
 for i in range(k):
     gpr_step = GaussianProcessRegressor().fit(X, y)
+    # gpr_step = GaussianProcessRegressor(kernel=RBF(length_scale=0.2)).fit(X, y)
     mu_par, sigma_par = gpr_step.predict(np.array(x).reshape((1, n_features)), return_std=True)
 
-    x = des_grid[np.argmax(acqUCB(des_grid, gpr_step, X))]
+    x = des_grid[np.argmax(acqEI(des_grid, gpr_step, X))]
     y_step = f(x)
     X = np.append(X, x).reshape(-1, n_features)
     y = np.append(y, y_step).reshape(-1, 1)
@@ -58,16 +60,20 @@ axs1[0].plot(des_grid, -f(des_grid), '--')
 axs1[0].plot(des_grid, -y_pred, 'r', lw=2)
 axs1[0].plot(des_grid, -y_pred.flatten() - 2 * sigma_pred, 'k', lw=.5)
 axs1[0].plot(des_grid, -y_pred.flatten() + 2 * sigma_pred, 'k', lw=.5)
+
+# print(des_grid.flatten())
+# print(-y_pred.flatten() - 2 * sigma_pred.flatten())
+
 axs1[0].fill_between(des_grid.flatten(), -y_pred.flatten() - 2 * sigma_pred, -y_pred.flatten() + 2 * sigma_pred, alpha=0.2, color='r')
 axs1[0].scatter(X[:-1], -y[:-1], color='r')
 axs1[0].set_xlabel('x')
 axs1[0].set_ylabel('y')
 axs1[0].set_title('x*cos(x) BO iteration step %d' % k)
-axs1[0].set_ylim([-3.5, 2.75])
+# axs1[0].set_ylim([-3.5, 2.75])
 
-acq = acqUCB(des_grid, gpr_step, X)
-axs1[1].plot(des_grid, acqUCB(des_grid, gpr_step, X) / max(acqUCB(des_grid, gpr_step, X)))
-axs1[1].scatter(des_grid[np.argmax(acq)], max(acq) / max(acqUCB(des_grid, gpr_step, X)), color='k')
+acq = acqEI(des_grid, gpr_step, X)
+axs1[1].plot(des_grid, (acq - min(acq)) / (max(acq) - min(acq)))
+axs1[1].scatter(des_grid[np.argmax(acq)], 1, color='k')
 axs1[1].set_xlabel('x')
 axs1[1].set_ylabel('Acquisition (normalized)')
 axs1[1].set_title('UCB')

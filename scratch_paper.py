@@ -22,3 +22,8 @@ from scipy.stats import norm
 # print(10 ** np.linspace(-10, 4, 50))
 
 # print(rosen([1, 1]))
+
+a = [1]
+b = a
+a = [2]
+print(b)

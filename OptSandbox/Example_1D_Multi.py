@@ -8,6 +8,8 @@ from scipy.stats import norm
 
 import GPy.models
 
+np.random.seed(123)
+
 def acqEI(x_par, gpr, X_train, xi=0):
     mu_par, sigma_par = gpr.predict(np.array(x_par))
 
@@ -27,25 +29,31 @@ def acqEI(x_par, gpr, X_train, xi=0):
 
     return res
 
-def acqUCB(x_par, gpr, X_train, kappa=.1):
+def acqUCB(x_par, gpr, X_train, kappa=2):
     mu_par, sigma_par = gpr.predict(np.array(x_par).reshape(-1, 1))
 
-    mu_par = mu_par[1]
-    sigma_par = sigma_par[1]
+    # mu_par = mu_par[1]
+    # sigma_par = sigma_par[1]
 
-    return mu_par + kappa * sigma_par
+    acq_lf = mu_par[0] + kappa * sigma_par[0]
+    acq_hf = mu_par[1] + kappa * sigma_par[1]
+
+    return acq_lf, acq_hf
+    # return acq_hf
 
 # def f(x):
 #     return -x * np.cos(x)
 
 # Expensive Function
 def fe(x):
-    return - (6.0 * x - 2.) ** 2 * np.sin(12 * x - 4)
+    return - 10 * x * np.cos(x * 11)
+    # return - (6.0 * x - 2.) ** 2 * np.sin(12 * x - 4)
 
 # Cheap Function
 def fc(x):
     A = 0.5
     B = 10
+    # B = 2
     C = 5
     return A * fe(x) + B * (x - 0.5) - C
 
@@ -55,74 +63,130 @@ def fc(x):
 
 des_grid = np.linspace(0, 1, 100).reshape(-1, 1)
 
-Xl = np.linspace(0, 1, 11).reshape(-1, 1)
-Xh = np.array([0, 0.4, 0.6, 0.8, 1]).reshape(-1, 1)
-
-X = [Xl, Xh]
-
-Yl = fc(Xl)
-Yh = fe(Xh)
-
-Y = [Yl, Yh]
+# Xl = np.linspace(0, 1, 11).reshape(-1, 1)
+# Xh = np.array([0, 0.4, 0.6, 0.8, 1]).reshape(-1, 1)
+#
+# X = [Xl, Xh]
+#
+# Yl = fc(Xl)
+# Yh = fe(Xh)
+#
+# Y = [Yl, Yh]
 
 ### Loop
 
-x = X[0][5]
+x = np.array([0.5])
 
-mfDoE = np.array([x])
-mfDoE_evals = np.array([fe(x)])
+mfDoE = [np.array([x]), np.array([x])]
+mfDoE_hist = [np.array([x]), np.array([x])]
+
+mfDoE_evals = [np.array([fc(x)]), np.array([fe(x)])]
+mfDoE_evals_hist = [np.array([fc(x)]), np.array([fe(x)])]
 
 n_features = 1
-k = 2
+k = 27
 for i in range(k):
-    # gpr_step = GaussianProcessRegressor().fit(Xh, Yh)
+    p = np.random.random()
+
+    if i > 0:
+        mfDoE_new = mfDoE[m][-1]
+        mfDoE_new_eval = mfDoE_evals[m][-1]
+
+    # if p <= 1/4 or i % 5 == 0:
+    if i % 5 == 0:
+        g = fe
+        m = 1
+    else:
+        g = fc
+        m = 0
+
     mfgpr_step = GPy.models.multiGPRegression(mfDoE, mfDoE_evals)
 
-    # mu_par, sigma_par = gpr_step.predict(np.array(x).reshape((1, n_features)), return_std=True)
+    # mfgpr_step.optimize_restarts(restarts=2, verbose=False)
+
+    mfgpr_step.models[0]['Gaussian_noise.variance'] = 0
+    # # mfgpr_step.models[0]['rbf.variance'] = 1.5
+    mfgpr_step.models[0]['rbf.lengthscale'] = 0.1
+    #
+    mfgpr_step.models[1]['Gaussian_noise.variance'] = 0
+    # # mfgpr_step.models[1]['rbf.variance'] = 1.5
+    mfgpr_step.models[1]['rbf.lengthscale'] = 0.1
+
+    # print('step', i)
+    # print(mfgpr_step)
+
     mu_mf, sigma_mf = mfgpr_step.predict(np.array(x).reshape((1, n_features)))
 
-    # x = des_grid[np.argmax(acqEI(des_grid, gpr_step, X))]
-    x = des_grid[np.argmax(acqUCB(des_grid, mfgpr_step, X))]
+    x = des_grid[np.argmax(acqUCB(des_grid, mfgpr_step, mfDoE)[m])]
 
-    # y_step = f(x)
-    y_step = fe(x)
+    y_step = g(x)
 
-    mfDoE = np.append(mfDoE, x).reshape(-1, n_features)
-    mfDoE_evals = np.append(mfDoE_evals, y_step).reshape(-1, 1)
+    mfDoE[m] = np.append(mfDoE[m], x).reshape(-1, n_features)
+    mfDoE_evals[m] = np.append(mfDoE_evals[m], y_step).reshape(-1, 1)
+
+    # print(m)
+    # print(mfDoE[m])
+
+mfDoE_hist[m] = mfDoE[m][:-1]
+mfDoE_evals_hist[m] = mfDoE_evals[m][:-1]
+
+mfDoE_hist[1 - m] = mfDoE[1 - m]
+mfDoE_evals_hist[1 - m] = mfDoE_evals[1 - m]
 
 y_pred, sigma_pred = mfgpr_step.predict(des_grid)
-y_pred = y_pred[1]
-sigma_pred = sigma_pred[1]
+# y_pred = y_pred[1]
+# sigma_pred = sigma_pred[1]
 
-print(mfDoE)
-print(mfDoE_evals)
+# print(mfDoE[0])
+# print(-mfDoE_evals[0])
 
 ### Visualization ###
 
 fig1, axs1 = plt.subplots(2, 1, figsize=(5, 8))
 
-axs1[0].plot(des_grid, -fe(des_grid), '--')
-axs1[0].plot(des_grid, -fc(des_grid), '--')
-axs1[0].plot(des_grid, -y_pred, 'r', lw=2)
-# axs1[0].plot(des_grid, -y_pred.flatten() - 2 * sigma_pred, 'k', lw=.5)
-# axs1[0].plot(des_grid, -y_pred.flatten() + 2 * sigma_pred, 'k', lw=.5)
-# axs1[0].fill_between(des_grid.flatten(), -y_pred.flatten() - 2 * sigma_pred, -y_pred.flatten() + 2 * sigma_pred, alpha=0.2, color='r')
-axs1[0].scatter(mfDoE[:-1], -mfDoE_evals[:-1], color='r')
-axs1[0].set_xlabel('x')
-axs1[0].set_ylabel('y')
-axs1[0].set_title('BO iteration step %d' % k)
-# axs1[0].set_ylim([-3.5, 2.75])
+axs1[0].plot(des_grid, -fe(des_grid), '--', color='orange', label='Expensive function (exact)')
+axs1[0].plot(des_grid, -fc(des_grid), '--', color='blue', label='Cheap function (exact)')
+axs1[0].plot(des_grid, -y_pred[1], 'orange', lw=2)
+axs1[0].plot(des_grid, -y_pred[0], 'blue', lw=2)
+axs1[0].plot(des_grid, -y_pred[0].flatten() - 2 * sigma_pred[0].flatten(), 'k', lw=.5)
+axs1[0].plot(des_grid, -y_pred[0].flatten() + 2 * sigma_pred[0].flatten(), 'k', lw=.5)
+axs1[0].plot(des_grid, -y_pred[1].flatten() - 2 * sigma_pred[1].flatten(), 'k', lw=.5)
+axs1[0].plot(des_grid, -y_pred[1].flatten() + 2 * sigma_pred[1].flatten(), 'k', lw=.5)
 
-acq = acqUCB(des_grid, mfgpr_step, X)
-print(acq)
-# axs1[1].plot(des_grid, acqEI(des_grid, gpr_step, X) / max(acqEI(des_grid, gpr_step, X)))
-# axs1[1].scatter(des_grid[np.argmax(acq)], max(acq) / max(acqEI(des_grid, gpr_step, X)), color='k')
-# axs1[1].set_xlabel('x')
-# axs1[1].set_ylabel('Acquisition (normalized)')
+# print(max(sigma_pred[1]))
+
+axs1[0].fill_between(des_grid.flatten(), -y_pred[1].flatten() + 2 * sigma_pred[1].flatten(), -y_pred[1].flatten() - 2 * sigma_pred[1].flatten(), alpha=0.2, color='orange')
+axs1[0].fill_between(des_grid.flatten(), -y_pred[0].flatten() + 2 * sigma_pred[0].flatten(), -y_pred[0].flatten() - 2 * sigma_pred[0].flatten(), alpha=0.2, color='blue')
+
+# axs1[0].fill_between(des_grid.flatten(), -y_pred[0].flatten() - 10000 * sigma_pred[0].flatten(), -y_pred[0].flatten() + 10000 * sigma_pred[0].flatten(), alpha=0.2, color='r')
+
+axs1[0].scatter(mfDoE_hist[1], -mfDoE_evals_hist[1], color='orange')
+axs1[0].scatter(mfDoE_hist[0], -mfDoE_evals_hist[0], color='blue')
+
+# print(m_pre)
+# print(mfDoE[0])
+# print(-mfDoE_evals[0])
+axs1[0].scatter(mfDoE_new, -mfDoE_new_eval, color='red')
+
+# axs1[0].set_xlabel('x')
+# axs1[0].set_ylabel('y')
+# axs1[0].set_title('BO iteration step %d' % k)
+# axs1[0].set_ylim([-3.5, 2.75])
+axs1[0].legend()
+
+acq = acqUCB(des_grid, mfgpr_step, mfDoE)
+# print(acq[0])
+axs1[1].plot(des_grid, (acq[0] - min(acq[0])) / (max(acq[0]) - min(acq[0])), color='blue')
+axs1[1].scatter(des_grid[np.argmax(acq[0])], 1, color='k')
+axs1[1].plot(des_grid, (acq[1] - min(acq[1])) / (max(acq[1]) - min(acq[1])), color='orange')
+axs1[1].scatter(des_grid[np.argmax(acq[1])], 1, color='k')
+axs1[1].set_xlabel('x')
+axs1[1].set_ylabel('Acquisition (normalized)')
 # axs1[1].set_title('Expected improvement')
 #
-# plt.tight_layout()
-# for ax in axs1: ax.grid()
+plt.tight_layout()
+
+for ax in axs1: ax.grid()
 #
 # print(X)
 # print(X[np.argmin(-y)])
