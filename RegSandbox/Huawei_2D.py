@@ -5,10 +5,10 @@ from sklearn.metrics import r2_score
 from sklearn.preprocessing import StandardScaler
 import os
 
-
 np.random.seed(123)
 
-os.chdir('C:\\Users\\Leo\\PycharmProjects\\OptProject\\Data')
+# os.chdir('C:\\Users\\Leo\\PycharmProjects\\OptProject\\Data')
+os.chdir('/home/leoguo/PycharmProjects/OptProject/Data')
 
 ################################################################################
 # Expensive Function
@@ -36,7 +36,7 @@ def gc(x):
 
 ################################################################################
 
-CheapResp = np.loadtxt('c_Resp_Suface_case2.txt')
+CheapResp = np.loadtxt('c_Resp_Suface_case5.txt')
 ExpensiveResp = np.loadtxt('c_Resp_Suface_case1.txt')
 
 Xc1 = np.linspace(50, 200, 10).reshape(-1,1)
@@ -86,7 +86,8 @@ mExp = GPy.models.GPRegression(Xl, Ye_full)
 muExp, sigmaExp = mExp.predict(x)
 
 mExp.param_array[2] = 0.05
-print(mExp)
+# print(mExp)
+# print(mExp['Gaussian_noise.variance'])
 
 m = GPy.models.multiGPRegression(X, Y)
 
@@ -96,10 +97,19 @@ m.models[1]['Gaussian_noise.variance'] = 0.05
 
 mu, sigma = m.predict(x)
 
+# print(m)
+# print(m.models[0]['Gaussian_noise.variance'])
+
+# (MF)GPR hyperparameters
+print(mExp)
 print(m)
 
-print('Cheap 1-fid score:', r2_score(muExp, mu[0]))
-print('2-fid score:', r2_score(muExp, mu[1]))
+print()
+
+# Coefficients of determination
+print('R-squared score of full expensive GPR surface compared with...')
+print('Cheap GPR surface:', r2_score(muExp, mu[0]))
+print('Multi-fidelity GPR surface:', r2_score(muExp, mu[1]))
 
 mu = [a.reshape(np.shape(des_grid_xx)) for a in mu]
 sigma = [a.reshape(np.shape(des_grid_xx)) for a in sigma]
@@ -145,4 +155,4 @@ axEx.view_init(20, 225)
 axEx.plot_surface(des_grid_xx, des_grid_yy, muExp.reshape(np.shape(des_grid_xx)), cmap='viridis')
 axEx.set_title('Full GPR surface')
 
-plt.show()
+# plt.show()
