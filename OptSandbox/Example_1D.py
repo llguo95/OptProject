@@ -20,32 +20,33 @@ def acqEI(x_par, gpr, X_train, xi=0):
 
     return res
 
-def acqUCB(x_par, gpr, X_train, kappa=.1):
+def acqUCB(x_par, gpr, X_train, kappa=2):
     mu_par, sigma_par = gpr.predict(np.array(x_par).reshape(-1, 1), return_std=True)
     return mu_par.flatten() + kappa * sigma_par
 
 def f(x):
     # x = 5 * x
-    return - x * np.cos(x)
+    return - 10 * x * np.cos(x * 11)
 
 ### 1D
 X = np.array([[0.5]])
 y = f(X)
 
-des_grid = np.linspace(0, 5, 100).reshape(-1, 1)
+des_grid = np.linspace(0, 1, 100).reshape(-1, 1)
 
 ### Loop
 
 x = X[0]
 
 n_features = 1
-k = 3
+k = 12
 for i in range(k):
-    gpr_step = GaussianProcessRegressor().fit(X, y)
+    # gpr_step = GaussianProcessRegressor().fit(X, y)
+    gpr_step = GaussianProcessRegressor(kernel=RBF(length_scale=.1) + WhiteKernel(noise_level=.02)).fit(X, y)
     # gpr_step = GaussianProcessRegressor(kernel=RBF(length_scale=0.2)).fit(X, y)
     mu_par, sigma_par = gpr_step.predict(np.array(x).reshape((1, n_features)), return_std=True)
 
-    x = des_grid[np.argmax(acqEI(des_grid, gpr_step, X))]
+    x = des_grid[np.argmax(acqUCB(des_grid, gpr_step, X))]
     y_step = f(x)
     X = np.append(X, x).reshape(-1, n_features)
     y = np.append(y, y_step).reshape(-1, 1)
@@ -71,7 +72,7 @@ axs1[0].set_ylabel('y')
 axs1[0].set_title('x*cos(x) BO iteration step %d' % k)
 # axs1[0].set_ylim([-3.5, 2.75])
 
-acq = acqEI(des_grid, gpr_step, X)
+acq = acqUCB(des_grid, gpr_step, X)
 axs1[1].plot(des_grid, (acq - min(acq)) / (max(acq) - min(acq)))
 axs1[1].scatter(des_grid[np.argmax(acq)], 1, color='k')
 axs1[1].set_xlabel('x')
@@ -81,10 +82,10 @@ axs1[1].set_title('UCB')
 plt.tight_layout()
 for ax in axs1: ax.grid()
 
-print(X)
-print(X[np.argmin(-y)])
-print(-y)
-print(min(-y))
+# print(X)
+# print(X[np.argmin(-y)])
+# print(-y)
+# print(min(-y))
 
 # plt.savefig('step_%d.png' % (k - 1))
 plt.show()

@@ -56,6 +56,7 @@ def fc(x):
     # B = 2
     C = 5
     return A * fe(x) + B * (x - 0.5) - C
+    # return fe(x)
 
 ### 1D
 # X = np.array([[0.5]])
@@ -84,7 +85,7 @@ mfDoE_evals = [np.array([fc(x)]), np.array([fe(x)])]
 mfDoE_evals_hist = [np.array([fc(x)]), np.array([fe(x)])]
 
 n_features = 1
-k = 27
+k = 7
 for i in range(k):
     p = np.random.random()
 

@@ -25,7 +25,8 @@ def fc(x):
 
 x = np.linspace(0, 1, 100).reshape(-1, 1)
 
-Xl = np.linspace(0, 1, 11).reshape(-1, 1)
+# Xl = np.linspace(0, 1, 11).reshape(-1, 1)
+Xl = np.linspace(0.04, 0.96, 11).reshape(-1, 1)
 # Xl = np.array([0.4]).reshape(-1, 1)
 Xh = np.array([0, 0.4, 0.6, 0.8, 1]).reshape(-1, 1)
 # Xh = np.array([0.4, 0.8]).reshape(-1, 1)
