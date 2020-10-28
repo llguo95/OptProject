@@ -42,11 +42,12 @@ Y = [Yl, Yh]
 # print(Y)
 
 m = GPy.models.multiGPRegression(X, Y)
+# m = GPy.models.GPRegression(Xl, Yl)
 
 # gpr = GaussianProcessRegressor().fit(Xl, Yl)
 # mu_par, sigma_par = gpr.predict(np.array(x), return_std=True)
 
-m.optimize_restarts(restarts=4, verbose=False)
+m.optimize_restarts()
 # m.models[0]['Gaussian_noise.variance'] = 0
 m.models[1]['Gaussian_noise.variance'] = 0.
 

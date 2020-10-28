@@ -8,7 +8,8 @@ import os
 np.random.seed(123)
 
 # os.chdir('C:\\Users\\Leo\\PycharmProjects\\OptProject\\Data')
-os.chdir('/home/leoguo/PycharmProjects/OptProject/Data')
+# os.chdir('/home/leoguo/PycharmProjects/OptProject/Data')
+os.chdir('C:\\Users\\leoli\\PycharmProjects\\OptProject\\Data')
 
 ################################################################################
 # Expensive Function
@@ -83,9 +84,10 @@ Y = [Yl, Yh]
 ###
 
 mExp = GPy.models.GPRegression(Xl, Ye_full)
-muExp, sigmaExp = mExp.predict(x)
 
 mExp.param_array[2] = 0.05
+
+muExp, sigmaExp = mExp.predict(x)
 # print(mExp)
 # print(mExp['Gaussian_noise.variance'])
 
@@ -155,4 +157,4 @@ axEx.view_init(20, 225)
 axEx.plot_surface(des_grid_xx, des_grid_yy, muExp.reshape(np.shape(des_grid_xx)), cmap='viridis')
 axEx.set_title('Full GPR surface')
 
-# plt.show()
+plt.show()
