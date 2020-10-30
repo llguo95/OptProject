@@ -7,9 +7,9 @@ import os
 
 np.random.seed(123)
 
-# os.chdir('C:\\Users\\Leo\\PycharmProjects\\OptProject\\Data')
+os.chdir('C:\\Users\\Leo\\PycharmProjects\\OptProject\\Data')
 # os.chdir('/home/leoguo/PycharmProjects/OptProject/Data')
-os.chdir('C:\\Users\\leoli\\PycharmProjects\\OptProject\\Data')
+# os.chdir('C:\\Users\\leoli\\PycharmProjects\\OptProject\\Data')
 
 ################################################################################
 # Expensive Function
