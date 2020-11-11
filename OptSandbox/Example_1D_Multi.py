@@ -85,7 +85,7 @@ mfDoE_evals = [np.array([fc(x)]), np.array([fe(x)])]
 mfDoE_evals_hist = [np.array([fc(x)]), np.array([fe(x)])]
 
 n_features = 1
-k = 7
+k = 16
 for i in range(k):
     p = np.random.random()
 
@@ -103,18 +103,18 @@ for i in range(k):
 
     mfgpr_step = GPy.models.multiGPRegression(mfDoE, mfDoE_evals)
 
-    # mfgpr_step.optimize_restarts(restarts=2, verbose=False)
+    # mfgpr_step.optimize_restarts(restarts=2)
 
     mfgpr_step.models[0]['Gaussian_noise.variance'] = 0
-    # # mfgpr_step.models[0]['rbf.variance'] = 1.5
+    # mfgpr_step.models[0]['rbf.variance'] = 1.5
     mfgpr_step.models[0]['rbf.lengthscale'] = 0.1
-    #
+    # # #
     mfgpr_step.models[1]['Gaussian_noise.variance'] = 0
     # # mfgpr_step.models[1]['rbf.variance'] = 1.5
     mfgpr_step.models[1]['rbf.lengthscale'] = 0.1
 
     # print('step', i)
-    # print(mfgpr_step)
+    print(mfgpr_step)
 
     mu_mf, sigma_mf = mfgpr_step.predict(np.array(x).reshape((1, n_features)))
 
@@ -138,7 +138,7 @@ y_pred, sigma_pred = mfgpr_step.predict(des_grid)
 # y_pred = y_pred[1]
 # sigma_pred = sigma_pred[1]
 
-# print(mfDoE[0])
+print(mfDoE[0])
 # print(-mfDoE_evals[0])
 
 ### Visualization ###
@@ -167,7 +167,7 @@ axs1[0].scatter(mfDoE_hist[0], -mfDoE_evals_hist[0], color='blue')
 # print(m_pre)
 # print(mfDoE[0])
 # print(-mfDoE_evals[0])
-axs1[0].scatter(mfDoE_new, -mfDoE_new_eval, color='red')
+# axs1[0].scatter(mfDoE_new, -mfDoE_new_eval, color='red')
 
 # axs1[0].set_xlabel('x')
 # axs1[0].set_ylabel('y')
