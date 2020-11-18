@@ -47,15 +47,15 @@ des_grid_y = np.linspace(-2, 2, 100)
 des_grid_xx, des_grid_yy = np.meshgrid(des_grid_x, des_grid_y)
 des_grid = np.array([des_grid_xx.reshape(-1, 1), des_grid_yy.reshape(-1, 1)]).squeeze().T
 
-print(np.shape(des_grid))
+# print(np.shape(des_grid))
 
 ### Loop
 
 x = X[0]
 
 n_features = 2
-k = 1
-for i in range(k):
+k = 15 # number of iterations
+for i in range(k): # optimization loop
     gpr_step = GaussianProcessRegressor().fit(X, y)
     mu_par, sigma_par = gpr_step.predict(np.array(x).reshape((1, n_features)), return_std=True)
 
@@ -94,4 +94,4 @@ print(-y)
 print('Minimum = ', min(-y))
 
 # plt.savefig('step_%d.png' % (k - 1))
-# plt.show()
+plt.show()

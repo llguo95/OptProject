@@ -85,8 +85,8 @@ mfDoE_evals = [np.array([fc(x)]), np.array([fe(x)])]
 mfDoE_evals_hist = [np.array([fc(x)]), np.array([fe(x)])]
 
 n_features = 1
-k = 16
-for i in range(k):
+k = 16 # number of iterations
+for i in range(k): # optimization loop
     p = np.random.random()
 
     if i > 0:
@@ -114,7 +114,7 @@ for i in range(k):
     mfgpr_step.models[1]['rbf.lengthscale'] = 0.1
 
     # print('step', i)
-    print(mfgpr_step)
+    # print(mfgpr_step)
 
     mu_mf, sigma_mf = mfgpr_step.predict(np.array(x).reshape((1, n_features)))
 
@@ -138,7 +138,7 @@ y_pred, sigma_pred = mfgpr_step.predict(des_grid)
 # y_pred = y_pred[1]
 # sigma_pred = sigma_pred[1]
 
-print(mfDoE[0])
+# print(mfDoE[0])
 # print(-mfDoE_evals[0])
 
 ### Visualization ###
