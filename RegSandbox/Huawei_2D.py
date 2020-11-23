@@ -93,13 +93,14 @@ muExp, sigmaExp = mExp.predict(x)
 
 m = GPy.models.multiGPRegression(X, Y)
 
-# m.optimize_restarts(restarts=4, verbose=False)
-m.models[0]['Gaussian_noise.variance'].fix(0.1)
-m.models[0]['rbf.variance'].fix(1)
-m.models[0]['rbf.lengthscale'].fix(1)
-m.models[1]['Gaussian_noise.variance'].fix(0.05)
-m.models[1]['rbf.variance'].fix(1)
-m.models[1]['rbf.lengthscale'].fix(1)
+m.optimize_restarts(restarts=4, verbose=False)
+
+# m.models[0]['Gaussian_noise.variance'].fix(0.1)
+# m.models[0]['rbf.variance'].fix(1)
+# m.models[0]['rbf.lengthscale'].fix(1)
+# m.models[1]['Gaussian_noise.variance'].fix(0.05)
+# m.models[1]['rbf.variance'].fix(1)
+# m.models[1]['rbf.lengthscale'].fix(1)
 
 mu, sigma = m.predict(x)
 

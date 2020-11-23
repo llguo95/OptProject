@@ -62,12 +62,12 @@ if optimizer_bool:
 
 # m.models[0]['Gaussian_noise.variance'] = 0
 # m.models[0]['rbf.variance'] = 1.5
-# m.models[0]['rbf.lengthscale'] = 0.1
+# m.models[0]['rbf.lengthscale'].fix(0.1)
 
 # m.models[1]['Gaussian_noise.variance'] = 0.001
 # m.models[1]['Gaussian_noise.variance'].fix(0)
 # m.models[1]['rbf.variance'] = 1.5
-# m.models[1]['rbf.lengthscale'] = 0.1
+# m.models[1]['rbf.lengthscale'].fix(0.1)
 
 print(m.models[1].log_likelihood())
 
