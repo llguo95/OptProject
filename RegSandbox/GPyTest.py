@@ -24,19 +24,20 @@ def fc(x):
 ################################################################################
 
 optimizer_bool = True
-optimizer_string = 'simplex'
+optimizer_string = 'lbfgsb'
 num_of_restarts = 10
 
 ###########
 
 x = np.linspace(0, 1, 100).reshape(-1, 1)
 
-Xl = np.linspace(0, 1, 6).reshape(-1, 1)
+Xl = np.linspace(0, 1, 11).reshape(-1, 1)
 # Xl = np.random.random(7).reshape(-1, 1)
 # Xl = np.array([0.1, 0.25, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]).reshape(-1, 1)
 # Xl = np.linspace(0.04, 0.96, 11).reshape(-1, 1)
 
-Xh = np.array([0, 0.4, 1]).reshape(-1, 1)
+Xh = np.linspace(0, 1, 6).reshape(-1, 1)
+# Xh = np.array([0, 0.4, 1]).reshape(-1, 1)
 # Xh = np.array([0, 0.4, 0.6, 0.8, 1]).reshape(-1, 1)
 # Xh = np.array([0.4, 0.8]).reshape(-1, 1)
 
@@ -58,14 +59,14 @@ m.models[0].preferred_optimizer = optimizer_string
 m.models[1].preferred_optimizer = optimizer_string
 
 if optimizer_bool:
-    m.optimize_restarts(restarts=num_of_restarts, verbose=False)
+    m.optimize_restarts(restarts=num_of_restarts, verbose=True)
 
-# m.models[0]['Gaussian_noise.variance'] = 0
+m.models[0]['Gaussian_noise.variance'].fix(0.5)
 # m.models[0]['rbf.variance'] = 1.5
 # m.models[0]['rbf.lengthscale'].fix(0.1)
 
 # m.models[1]['Gaussian_noise.variance'] = 0.001
-# m.models[1]['Gaussian_noise.variance'].fix(0)
+m.models[1]['Gaussian_noise.variance'].fix(0)
 # m.models[1]['rbf.variance'] = 1.5
 # m.models[1]['rbf.lengthscale'].fix(0.1)
 
@@ -77,7 +78,7 @@ print(m)
 mu, sigma = m.predict(x)
 
 ### Visualization
-vis = False
+vis = True
 if vis:
     plt.plot(x, mu[0], color='b', label='MF cheap GPR (regular GPR)')
     plt.plot(x, mu[0] + 2 * sigma[0], color='k', lw=.5)
