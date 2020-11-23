@@ -77,31 +77,32 @@ print(m)
 mu, sigma = m.predict(x)
 
 ### Visualization
+vis = False
+if vis:
+    plt.plot(x, mu[0], color='b', label='MF cheap GPR (regular GPR)')
+    plt.plot(x, mu[0] + 2 * sigma[0], color='k', lw=.5)
+    plt.plot(x, mu[0] - 2 * sigma[0], color='k', lw=.5)
+    plt.fill_between(x.flatten(), mu[0].flatten() - 2 * sigma[0].flatten(), mu[0].flatten() + 2 * sigma[0].flatten(), alpha=0.2, color='b')
 
-plt.plot(x, mu[0], color='b', label='MF cheap GPR (regular GPR)')
-plt.plot(x, mu[0] + 2 * sigma[0], color='k', lw=.5)
-plt.plot(x, mu[0] - 2 * sigma[0], color='k', lw=.5)
-plt.fill_between(x.flatten(), mu[0].flatten() - 2 * sigma[0].flatten(), mu[0].flatten() + 2 * sigma[0].flatten(), alpha=0.2, color='b')
+    # plt.plot(x, mu_par, color='r', label='Regular GPR', alpha=0.3)
+    # plt.plot(x, mu_par + 2 * sigma_par, color='k')
+    # plt.plot(x, mu_par - 2 * sigma_par, color='k')
+    # plt.fill_between(x.flatten(), mu_par.flatten() - 2 * sigma_par.flatten(), mu_par.flatten() + 2 * sigma_par.flatten(), alpha=0.2)
 
-# plt.plot(x, mu_par, color='r', label='Regular GPR', alpha=0.3)
-# plt.plot(x, mu_par + 2 * sigma_par, color='k')
-# plt.plot(x, mu_par - 2 * sigma_par, color='k')
-# plt.fill_between(x.flatten(), mu_par.flatten() - 2 * sigma_par.flatten(), mu_par.flatten() + 2 * sigma_par.flatten(), alpha=0.2)
+    plt.plot(x, mu[1], color='orange', label='MF expensive GPR')
+    plt.plot(x, mu[1] + 2 * sigma[1], color='k', lw=.5)
+    plt.plot(x, mu[1] - 2 * sigma[1], color='k', lw=.5)
+    plt.fill_between(x.flatten(), mu[1].flatten() - 2 * sigma[1].flatten(), mu[1].flatten() + 2 * sigma[1].flatten(), alpha=0.2, color='orange')
 
-plt.plot(x, mu[1], color='orange', label='MF expensive GPR')
-plt.plot(x, mu[1] + 2 * sigma[1], color='k', lw=.5)
-plt.plot(x, mu[1] - 2 * sigma[1], color='k', lw=.5)
-plt.fill_between(x.flatten(), mu[1].flatten() - 2 * sigma[1].flatten(), mu[1].flatten() + 2 * sigma[1].flatten(), alpha=0.2, color='orange')
+    plt.plot(x, fc(x), '--', color='b', label='Exact cheap function')
+    plt.plot(x, fe(x), '--', color='orange', label='Exact expensive function')
 
-plt.plot(x, fc(x), '--', color='b', label='Exact cheap function')
-plt.plot(x, fe(x), '--', color='orange', label='Exact expensive function')
+    plt.legend()
 
-plt.legend()
+    plt.scatter(Xl, Yl, color='b')
+    plt.scatter(Xh, Yh, color='orange')
 
-plt.scatter(Xl, Yl, color='b')
-plt.scatter(Xh, Yh, color='orange')
+    plt.grid()
 
-plt.grid()
-
-# m.plot()
-plt.show()
+    # m.plot()
+    plt.show()
