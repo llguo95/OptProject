@@ -24,19 +24,30 @@ def fc(x):
 ################################################################################
 
 optimizer_bool = True
-optimizer_string = 'lbfgsb'
+optimizer_string = 'simplex'
 num_of_restarts = 10
+DoE_set = 1
+
+noise_var_lf = 1
+noise_var_hf = 0.1
 
 ###########
 
 x = np.linspace(0, 1, 100).reshape(-1, 1)
 
-Xl = np.linspace(0, 1, 11).reshape(-1, 1)
+if DoE_set == 1:
+    Xl = np.linspace(0, 1, 11).reshape(-1, 1)
+    Xh = np.array([0, 0.4, 0.6, 0.8, 1]).reshape(-1, 1)
+
+if DoE_set == 2:
+    Xl = np.linspace(0, 1, 6).reshape(-1, 1)
+    Xh = np.array([0, 0.4, 1]).reshape(-1, 1)
+
 # Xl = np.random.random(7).reshape(-1, 1)
 # Xl = np.array([0.1, 0.25, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]).reshape(-1, 1)
 # Xl = np.linspace(0.04, 0.96, 11).reshape(-1, 1)
 
-Xh = np.linspace(0, 1, 6).reshape(-1, 1)
+# Xh = np.linspace(0, 1, 6).reshape(-1, 1)
 # Xh = np.array([0, 0.4, 1]).reshape(-1, 1)
 # Xh = np.array([0, 0.4, 0.6, 0.8, 1]).reshape(-1, 1)
 # Xh = np.array([0.4, 0.8]).reshape(-1, 1)
@@ -58,17 +69,28 @@ m = GPy.models.multiGPRegression(X, Y)
 m.models[0].preferred_optimizer = optimizer_string
 m.models[1].preferred_optimizer = optimizer_string
 
-if optimizer_bool:
-    m.optimize_restarts(restarts=num_of_restarts, verbose=True)
+# m.models[0]['Gaussian_noise.variance'].constrain_bounded(0, 1)
+# m.models[0]['rbf.variance'].constrain_bounded(1, 20)
+# m.models[0]['rbf.lengthscale'].constrain_bounded(0.1, 5)
 
-m.models[0]['Gaussian_noise.variance'].fix(0.5)
-# m.models[0]['rbf.variance'] = 1.5
+# m.models[1]['Gaussian_noise.variance'].constrain_bounded(0, 1)
+# m.models[1]['rbf.variance'].constrain_bounded(1, 5)
+# m.models[1]['rbf.lengthscale'].constrain_bounded(0.1, 5)
+
+if optimizer_bool:
+    m.optimize_restarts(restarts=num_of_restarts, verbose=False)
+
+m.models[0]['Gaussian_noise.variance'].fix(noise_var_lf)
+# m.models[0]['rbf.variance'].fix(1.5)
 # m.models[0]['rbf.lengthscale'].fix(0.1)
 
 # m.models[1]['Gaussian_noise.variance'] = 0.001
-m.models[1]['Gaussian_noise.variance'].fix(0)
-# m.models[1]['rbf.variance'] = 1.5
+m.models[1]['Gaussian_noise.variance'].fix(noise_var_hf)
+# m.models[1]['rbf.variance'].fix(0.1)
 # m.models[1]['rbf.lengthscale'].fix(0.1)
+
+# if optimizer_bool:
+#     m.optimize_restarts(restarts=num_of_restarts, verbose=False)
 
 print(m.models[1].log_likelihood())
 
@@ -105,5 +127,6 @@ if vis:
 
     plt.grid()
 
+    # plt.savefig('noise_experiment_Opt-%s_DoE%s_%s_%s.svg' % (optimizer_string, DoE_set, noise_var_lf, noise_var_hf))
     # m.plot()
     plt.show()
