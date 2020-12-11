@@ -16,16 +16,17 @@ m = GPy.models.GPRegression(X, Y)
 
 # m.optimize_restarts(restarts=4)
 
-# m.parameters[0][0]
+print(m.parameters[1])
 # m.parameters[1][0] = 0
-print(m.parameters[0])
+# print(m.parameters[0])
 
-# print(m)
+print(m)
 
 x = np.linspace(-1, 1, 100).reshape(-1, 1)
 mu, sigma = m.predict(x)
 
 plt.plot(x, mu)
 plt.scatter(X, Y, color='red')
+plt.grid()
 
 plt.show()

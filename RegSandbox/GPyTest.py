@@ -24,12 +24,12 @@ def fc(x):
 ################################################################################
 
 optimizer_bool = True
-optimizer_string = 'simplex'
+optimizer_string = 'lbfgsb'
 num_of_restarts = 10
 DoE_set = 1
 
-noise_var_lf = 1
-noise_var_hf = 0.1
+noise_var_lf = 0.5
+noise_var_hf = 0
 
 ###########
 
@@ -77,8 +77,8 @@ m.models[1].preferred_optimizer = optimizer_string
 # m.models[1]['rbf.variance'].constrain_bounded(1, 5)
 # m.models[1]['rbf.lengthscale'].constrain_bounded(0.1, 5)
 
-if optimizer_bool:
-    m.optimize_restarts(restarts=num_of_restarts, verbose=False)
+# if optimizer_bool:
+#     m.optimize_restarts(restarts=num_of_restarts, verbose=False)
 
 m.models[0]['Gaussian_noise.variance'].fix(noise_var_lf)
 # m.models[0]['rbf.variance'].fix(1.5)
@@ -89,8 +89,8 @@ m.models[1]['Gaussian_noise.variance'].fix(noise_var_hf)
 # m.models[1]['rbf.variance'].fix(0.1)
 # m.models[1]['rbf.lengthscale'].fix(0.1)
 
-# if optimizer_bool:
-#     m.optimize_restarts(restarts=num_of_restarts, verbose=False)
+if optimizer_bool:
+    m.optimize_restarts(restarts=num_of_restarts, verbose=False)
 
 print(m.models[1].log_likelihood())
 

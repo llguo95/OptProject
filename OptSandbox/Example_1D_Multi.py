@@ -17,7 +17,6 @@ def acqEI(x_par, gpr, X_train, xi=0):
     sigma_par = sigma_par[1]
 
     mu_par = mu_par.flatten()
-    # print(X_train)
     f_max_X_train = max(fe(X_train))
 
     z = (mu_par - f_max_X_train - xi) / sigma_par
