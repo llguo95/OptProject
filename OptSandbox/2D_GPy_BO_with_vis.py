@@ -49,7 +49,7 @@ des_grid_scaled = scaler.transform(des_grid)
 x = X_scaled[0]
 
 n_features = 2
-k = 5 # number of iterations
+k = 20 # number of iterations
 for i in range(k): # optimization loop
     gpr_step = GPy.models.GPRegression(X_scaled, Y)
     mu, sigma = gpr_step.predict(np.array(x).reshape((1, n_features)))
@@ -60,10 +60,10 @@ for i in range(k): # optimization loop
     Y = np.append(Y, y_step).reshape(-1, 1)
 
     ## Progress ##
-    np.savetxt('ProgTxt/in_iter_%d.csv' % (i + 1), x)
-    np.savetxt('ProgTxt/out_iter_%d.csv' % (i + 1), -y_step)
-    np.savetxt('ProgTxt/mu_iter_%d.csv' % (i + 1), gpr_step.predict(des_grid)[0].reshape(np.shape(des_grid_xx)), delimiter=",")
-    np.savetxt('ProgTxt/sigma_iter_%d.csv' % (i + 1), gpr_step.predict(des_grid)[1].reshape(np.shape(des_grid_xx)), delimiter=",")
+    # np.savetxt('ProgTxt/in_iter_%d.csv' % (i + 1), x)
+    # np.savetxt('ProgTxt/out_iter_%d.csv' % (i + 1), -y_step)
+    # np.savetxt('ProgTxt/mu_iter_%d.csv' % (i + 1), gpr_step.predict(des_grid)[0].reshape(np.shape(des_grid_xx)), delimiter=",")
+    # np.savetxt('ProgTxt/sigma_iter_%d.csv' % (i + 1), gpr_step.predict(des_grid)[1].reshape(np.shape(des_grid_xx)), delimiter=",")
 
 y_pred, sigma_pred = gpr_step.predict(des_grid)
 
@@ -86,15 +86,15 @@ X = scaler.inverse_transform(X_scaled)
 # axs2[3].contourf(des_grid_xx, des_grid_yy, acqUCB(des_grid, gpr_step, X).reshape(np.shape(des_grid_xx)))
 # axs2[3].scatter(X[:, 0], X[:, 1], color='r')
 #
-# print(X)
+print(X)
 
-np.savetxt('ProgTxt/in_history.csv', X)
-np.savetxt('ProgTxt/out_history.csv', Y)
-np.savetxt('ProgTxt/in_min.csv', X[np.argmin(-Y)])
-np.savetxt('ProgTxt/out_min.csv', min(-Y))
+# np.savetxt('ProgTxt/in_history.csv', X)
+# np.savetxt('ProgTxt/out_history.csv', Y)
+# np.savetxt('ProgTxt/in_min.csv', X[np.argmin(-Y)])
+# np.savetxt('ProgTxt/out_min.csv', min(-Y))
 
-# print('Predicted minimizer = ', X[np.argmin(-Y)])
-# print(-Y)
-# print('Predicted minimum = ', min(-Y))
+print('Predicted minimizer = ', X[np.argmin(-Y)])
+print(-Y)
+print('Predicted minimum = ', min(-Y))
 #
 # plt.show()

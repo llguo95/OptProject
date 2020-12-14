@@ -50,4 +50,7 @@ from scipy.stats import norm
 # for i in a:
 #     print(i)
 
-a = np.loadtxt('OptSandbox/ProgTxt/in_iter_1.csv')
+# a = np.loadtxt('OptSandbox/ProgTxt/in_iter_1.csv')
+
+a = np.array([float('1')])
+print(np.shape(a))
