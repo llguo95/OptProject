@@ -14,6 +14,9 @@ for i in range(17):
 print(in_results)
 print(out_results)
 
+np.savetxt('../Results/in_hist_pending.csv', in_results, delimiter=',')
+np.savetxt('../Results/out_hist_pending.csv', out_results, delimiter=',')
+
 des_grid_x = np.linspace(30.0, 34.18, 100)
 des_grid_y = np.linspace(50.0, 200.0, 100)
 des_grid_xx, des_grid_yy = np.meshgrid(des_grid_x, des_grid_y)
