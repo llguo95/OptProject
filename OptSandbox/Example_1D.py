@@ -79,7 +79,7 @@ axs1[1].set_xlabel('x')
 axs1[1].set_ylabel('Acquisition (normalized)')
 axs1[1].set_title('UCB')
 
-plt.tight_layout()
+
 for ax in axs1: ax.grid()
 
 # print(X)

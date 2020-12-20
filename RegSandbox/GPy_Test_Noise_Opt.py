@@ -93,30 +93,30 @@ def noise_experiment(HPO_bool, HPO_string, num_of_restarts, DoE_set, noise_var_l
     mu, sigma = m.predict(x)
 
     ### Visualization
-    if vis_bool:
-        plt.figure()
-        plt.plot(x, mu[0], color='b', label='MF cheap GPR (regular GPR)')
-        plt.plot(x, mu[0] + 2 * sigma[0], color='k', lw=.5)
-        plt.plot(x, mu[0] - 2 * sigma[0], color='k', lw=.5)
-        plt.fill_between(x.flatten(), mu[0].flatten() - 2 * sigma[0].flatten(), mu[0].flatten() + 2 * sigma[0].flatten(), alpha=0.2, color='b')
-
-        plt.plot(x, mu[1], color='orange', label='MF expensive GPR')
-        plt.plot(x, mu[1] + 2 * sigma[1], color='k', lw=.5)
-        plt.plot(x, mu[1] - 2 * sigma[1], color='k', lw=.5)
-        plt.fill_between(x.flatten(), mu[1].flatten() - 2 * sigma[1].flatten(), mu[1].flatten() + 2 * sigma[1].flatten(), alpha=0.2, color='orange')
-
-        plt.plot(x, fc(x), '--', color='b', label='Exact cheap function')
-        plt.plot(x, fe(x), '--', color='orange', label='Exact expensive function')
-
-        plt.legend()
-
-        plt.scatter(Xl, Yl, color='b')
-        plt.scatter(Xh, Yh, color='orange')
-
-        plt.grid()
-
-        if save_bool:
-            plt.savefig('noise_experiment_Opt-%s_DoE%s_%s_%s.svg' % (HPO_string, DoE_set, noise_var_lf, noise_var_hf))
+    # if vis_bool:
+    #     plt.figure()
+    #     plt.plot(x, mu[0], color='b', label='MF cheap GPR (regular GPR)')
+    #     plt.plot(x, mu[0] + 2 * sigma[0], color='k', lw=.5)
+    #     plt.plot(x, mu[0] - 2 * sigma[0], color='k', lw=.5)
+    #     plt.fill_between(x.flatten(), mu[0].flatten() - 2 * sigma[0].flatten(), mu[0].flatten() + 2 * sigma[0].flatten(), alpha=0.2, color='b')
+    #
+    #     plt.plot(x, mu[1], color='orange', label='MF expensive GPR')
+    #     plt.plot(x, mu[1] + 2 * sigma[1], color='k', lw=.5)
+    #     plt.plot(x, mu[1] - 2 * sigma[1], color='k', lw=.5)
+    #     plt.fill_between(x.flatten(), mu[1].flatten() - 2 * sigma[1].flatten(), mu[1].flatten() + 2 * sigma[1].flatten(), alpha=0.2, color='orange')
+    #
+    #     plt.plot(x, fc(x), '--', color='b', label='Exact cheap function')
+    #     plt.plot(x, fe(x), '--', color='orange', label='Exact expensive function')
+    #
+    #     plt.legend()
+    #
+    #     plt.scatter(Xl, Yl, color='b')
+    #     plt.scatter(Xh, Yh, color='orange')
+    #
+    #     plt.grid()
+    #
+    #     if save_bool:
+    #         plt.savefig('noise_experiment_Opt-%s_DoE%s_%s_%s.svg' % (HPO_string, DoE_set, noise_var_lf, noise_var_hf))
         # m.plot()
         # plt.show()
 
@@ -166,8 +166,8 @@ for nl in nl_list:
             p.grid()
             p.set_title('LF noise ' + str(nl) + ', HF noise ' + str(nh))
 
-            if save_bool:
-                plt.savefig('noise_experiment_Opt-%s_DoE%s.svg' % (HPO_string, DoE_set))
+            # if save_bool:
+            #     plt.savefig('noise_experiment_Opt-%s_DoE%s.svg' % (HPO_string, DoE_set))
         count_i += 1
         count_i %= 3
     count_j += 1
