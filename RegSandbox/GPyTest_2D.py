@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import GPy.models
+import GPy_MF.models
 
 
 ################################################################################
@@ -72,7 +72,7 @@ Y = [Yl, Yh]
 # print(X)
 # print(Y)
 
-m = GPy.models.multiGPRegression(X, Y)
+m = GPy_MF.models.multiGPRegression(X, Y)
 
 m.optimize_restarts(restarts=4, verbose=False)
 m.models[1]['Gaussian_noise.variance'] = 0.

@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import GPy.models
+import GPy_MF.models
 
 np.random.seed(123)
 
@@ -54,7 +54,7 @@ def noise_experiment(HPO_bool, HPO_string, num_of_restarts, DoE_set, noise_var_l
     Y = [Yl, Yh]
 
     # MFGP regression object
-    m = GPy.models.multiGPRegression(X, Y)
+    m = GPy_MF.models.multiGPRegression(X, Y)
 
     # Select HP optimizer
     m.models[0].preferred_optimizer = HPO_string

@@ -1,15 +1,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import GPy.models
+import GPy_MF.models
 from sklearn.metrics import r2_score
 from sklearn.preprocessing import StandardScaler
 import os
 
 np.random.seed(123)
 
-# os.chdir('C:\\Users\\Leo\\PycharmProjects\\OptProject\\Data')
+os.chdir('C:\\Users\\Leo\\PycharmProjects\\OptProject\\Data')
 # os.chdir('/home/leoguo/PycharmProjects/OptProject/Data')
-os.chdir('C:\\Users\\leoli\\PycharmProjects\\OptProject\\Data')
+# os.chdir('C:\\Users\\leoli\\PycharmProjects\\OptProject\\Data')
 
 ################################################################################
 # Expensive Function
@@ -37,8 +37,8 @@ def gc(x):
 
 ################################################################################
 
-CheapResp = np.loadtxt('c_Resp_Suface_case5.txt')
-ExpensiveResp = np.loadtxt('c_Resp_Suface_case1.txt')
+CheapResp = np.loadtxt('c_Resp_Surface_case5.txt')
+ExpensiveResp = np.loadtxt('c_Resp_Surface_case1.txt')
 
 Xc1 = np.linspace(50, 200, 10).reshape(-1,1)
 Xc2 = np.linspace(30, 34.18, 10).reshape(-1,1)
@@ -83,15 +83,19 @@ Y = [Yl, Yh]
 
 ###
 
-mExp = GPy.models.GPRegression(Xl, Ye_full)
+mExp = GPy_MF.models.GPRegression(Xl, Ye_full)
 
-mExp.param_array[2] = 0.05
+mExp.optimize(max_iters=4)
+# mExp.param_array[2] = 0.05
+# mExp.parameters[1]['Gaussian_noise.variance'].fix(0.5)
+# print(mExp.parameters[1]['Gaussian_noise.variance'])
+# print()
 
 muExp, sigmaExp = mExp.predict(x)
 # print(mExp)
 # print(mExp['Gaussian_noise.variance'])
 
-m = GPy.models.multiGPRegression(X, Y)
+m = GPy_MF.models.multiGPRegression(X, Y)
 
 m.optimize_restarts(restarts=4, verbose=False)
 

@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import GPy.models
+import GPy_MF.models
 
 np.random.seed(123)
 
@@ -40,7 +40,7 @@ X = [Xl, Xh]
 Y = [Yl, Yh]
 
 # MFGP regression object
-m = GPy.models.multiGPRegression(X, Y)
+m = GPy_MF.models.multiGPRegression(X, Y)
 
 # HPO procedure
 if HPO_bool:

@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import GPy.models
+import GPy_MF.models
 
 from sklearn.gaussian_process import GaussianProcessRegressor
 
@@ -12,7 +12,7 @@ def f(x):
 X = np.linspace(-1, 1, 10).reshape(-1, 1)
 Y = f(X)
 
-m = GPy.models.GPRegression(X, Y)
+m = GPy_MF.models.GPRegression(X, Y)
 
 # print(m.parameters[0][0])
 

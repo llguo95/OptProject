@@ -39,7 +39,7 @@ des_grid = np.linspace(0, 1, 100).reshape(-1, 1)
 x = X[0]
 
 n_features = 1
-k = 12
+k = 10
 for i in range(k):
     # gpr_step = GaussianProcessRegressor().fit(X, y)
     gpr_step = GaussianProcessRegressor(kernel=RBF(length_scale=.1) + WhiteKernel(noise_level=.02)).fit(X, y)
@@ -57,7 +57,7 @@ y_pred, sigma_pred = gpr_step.predict(des_grid, return_std=True)
 
 fig1, axs1 = plt.subplots(2, 1, figsize=(5, 8))
 
-axs1[0].plot(des_grid, -f(des_grid), '--')
+axs1[0].plot(des_grid, -f(des_grid), '--', color='r')
 axs1[0].plot(des_grid, -y_pred, 'r', lw=2)
 axs1[0].plot(des_grid, -y_pred.flatten() - 2 * sigma_pred, 'k', lw=.5)
 axs1[0].plot(des_grid, -y_pred.flatten() + 2 * sigma_pred, 'k', lw=.5)
@@ -69,17 +69,17 @@ axs1[0].fill_between(des_grid.flatten(), -y_pred.flatten() - 2 * sigma_pred, -y_
 axs1[0].scatter(X[:-1], -y[:-1], color='r')
 axs1[0].set_xlabel('x')
 axs1[0].set_ylabel('y')
-axs1[0].set_title('x*cos(x) BO iteration step %d' % k)
+# axs1[0].set_title('x*cos(x) BO iteration step %d' % k)
 # axs1[0].set_ylim([-3.5, 2.75])
 
 acq = acqUCB(des_grid, gpr_step, X)
-axs1[1].plot(des_grid, (acq - min(acq)) / (max(acq) - min(acq)))
+axs1[1].plot(des_grid, (acq - min(acq)) / (max(acq) - min(acq)), color='r')
 axs1[1].scatter(des_grid[np.argmax(acq)], 1, color='k')
 axs1[1].set_xlabel('x')
 axs1[1].set_ylabel('Acquisition (normalized)')
 axs1[1].set_title('UCB')
 
-
+plt.tight_layout()
 for ax in axs1: ax.grid()
 
 # print(X)

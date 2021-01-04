@@ -1,9 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import GPy.kern
+import GPy_MF.kern
 
-k1 = GPy.kern.RBF(input_dim=1)
-k2 = GPy.kern.RBF(input_dim=1, lengthscale=.5)
+k1 = GPy_MF.kern.RBF(input_dim=1)
+k2 = GPy_MF.kern.RBF(input_dim=1, lengthscale=.5)
 
 fig, axs = plt.subplots()
 

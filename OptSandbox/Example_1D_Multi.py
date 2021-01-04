@@ -6,7 +6,7 @@ from sklearn.gaussian_process.kernels import *
 
 from scipy.stats import norm
 
-import GPy.models
+import GPy_MF.models
 
 np.random.seed(123)
 
@@ -29,6 +29,7 @@ def acqEI(x_par, gpr, X_train, xi=0):
     return res
 
 def acqUCB(x_par, gpr, X_train, kappa=2):
+    print(x_par)
     mu_par, sigma_par = gpr.predict(np.array(x_par).reshape(-1, 1))
 
     # mu_par = mu_par[1]
@@ -100,7 +101,8 @@ for i in range(k): # optimization loop
         g = fc
         m = 0
 
-    mfgpr_step = GPy.models.multiGPRegression(mfDoE, mfDoE_evals)
+    # print(mfDoE_evals)
+    mfgpr_step = GPy_MF.models.multiGPRegression(mfDoE, mfDoE_evals)
 
     # mfgpr_step.optimize_restarts(restarts=2)
 

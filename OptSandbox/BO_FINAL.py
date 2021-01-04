@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.stats import norm
-import GPy.models
+import GPy_MF.models
 from sklearn.preprocessing import StandardScaler
 
 def acqEI(x_par, gpr, Y_train, xi=0):
@@ -43,7 +43,7 @@ n_features = 2
 k = 20 # number of iterations
 
 for i in range(k): # optimization loop
-    gpr_step = GPy.models.GPRegression(X_scaled, Y)
+    gpr_step = GPy_MF.models.GPRegression(X_scaled, Y)
     mu, sigma = gpr_step.predict(np.array(x).reshape((1, n_features)))
 
     x = des_grid_scaled[np.argmax(acqEI(des_grid_scaled, gpr_step, Y))].reshape(-1, n_features)

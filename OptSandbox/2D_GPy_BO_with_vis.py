@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import norm
-import GPy.models
+import GPy_MF.models
 from sklearn.preprocessing import StandardScaler
 
 import os
@@ -49,9 +49,9 @@ des_grid_scaled = scaler.transform(des_grid)
 x = X_scaled[0]
 
 n_features = 2
-k = 20 # number of iterations
+k = 16 # number of iterations
 for i in range(k): # optimization loop
-    gpr_step = GPy.models.GPRegression(X_scaled, Y)
+    gpr_step = GPy_MF.models.GPRegression(X_scaled, Y)
     mu, sigma = gpr_step.predict(np.array(x).reshape((1, n_features)))
 
     x = des_grid_scaled[np.argmax(acqEI(des_grid_scaled, gpr_step, X))].reshape(-1, n_features)
@@ -71,20 +71,20 @@ X = scaler.inverse_transform(X_scaled)
 
 ## Visualization ###
 
-# fig2, axs2 = plt.subplots(1, 4, figsize=(16, 5))
-#
-# axs2[0].contourf(des_grid_xx, des_grid_yy, -g(des_grid).reshape(np.shape(des_grid_xx))) #, cmap=cm.coolwarm, locator=ticker.LogLocator())
-# axs2[0].contour(des_grid_xx, des_grid_yy, -g(des_grid).reshape(np.shape(des_grid_xx))) #, locator=ticker.LogLocator())
-#
-# axs2[1].contourf(des_grid_xx, des_grid_yy, -y_pred.reshape(np.shape(des_grid_xx))) #, cmap=cm.coolwarm)
-# axs2[1].contour(des_grid_xx, des_grid_yy, -y_pred.reshape(np.shape(des_grid_xx))) #, locator=ticker.LogLocator())
-# axs2[1].scatter(X[:, 0], X[:, 1], color='r')
-#
-# axs2[2].contourf(des_grid_xx, des_grid_yy, sigma_pred.reshape(np.shape(des_grid_xx)))
-# axs2[2].scatter(X[:, 0], X[:, 1], color='r')
-#
-# axs2[3].contourf(des_grid_xx, des_grid_yy, acqUCB(des_grid, gpr_step, X).reshape(np.shape(des_grid_xx)))
-# axs2[3].scatter(X[:, 0], X[:, 1], color='r')
+fig2, axs2 = plt.subplots(1, 4, figsize=(16, 5))
+
+axs2[0].contourf(des_grid_xx, des_grid_yy, -g(des_grid).reshape(np.shape(des_grid_xx))) #, cmap=cm.coolwarm, locator=ticker.LogLocator())
+axs2[0].contour(des_grid_xx, des_grid_yy, -g(des_grid).reshape(np.shape(des_grid_xx))) #, locator=ticker.LogLocator())
+
+axs2[1].contourf(des_grid_xx, des_grid_yy, -y_pred.reshape(np.shape(des_grid_xx))) #, cmap=cm.coolwarm)
+axs2[1].contour(des_grid_xx, des_grid_yy, -y_pred.reshape(np.shape(des_grid_xx))) #, locator=ticker.LogLocator())
+axs2[1].scatter(X[:, 0], X[:, 1], color='r')
+
+axs2[2].contourf(des_grid_xx, des_grid_yy, sigma_pred.reshape(np.shape(des_grid_xx)))
+axs2[2].scatter(X[:, 0], X[:, 1], color='r')
+
+axs2[3].contourf(des_grid_xx, des_grid_yy, acqUCB(des_grid, gpr_step, X).reshape(np.shape(des_grid_xx)))
+axs2[3].scatter(X[:, 0], X[:, 1], color='r')
 #
 print(X)
 
@@ -97,4 +97,4 @@ print('Predicted minimizer = ', X[np.argmin(-Y)])
 print(-Y)
 print('Predicted minimum = ', min(-Y))
 #
-# plt.show()
+plt.show()

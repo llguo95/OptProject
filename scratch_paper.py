@@ -8,6 +8,8 @@ from scipy.optimize import rosen
 
 from scipy.stats import norm
 
+import GPy_MF.models
+
 # x = np.linspace(0, 1, 10)
 # y = np.sin(2 * np.pi * x)
 # zero_array = np.zeros(np.shape(y))
@@ -52,5 +54,10 @@ from scipy.stats import norm
 
 # a = np.loadtxt('OptSandbox/ProgTxt/in_iter_1.csv')
 
-a = np.array([float('1')])
-print(np.shape(a))
+# a = np.array([float('1')])
+# print(np.shape(a))
+
+# a = np.array([1, 2, 3])
+# print(a)
+# a = np.array(a)
+# print(a)
