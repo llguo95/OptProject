@@ -6,7 +6,7 @@ from sklearn.gaussian_process.kernels import *
 
 from scipy.stats import norm
 
-import GPy_MF.models
+import GPy.models
 
 np.random.seed(123)
 
@@ -102,7 +102,7 @@ for i in range(k): # optimization loop
         m = 0
 
     # print(mfDoE_evals)
-    mfgpr_step = GPy_MF.models.multiGPRegression(mfDoE, mfDoE_evals)
+    mfgpr_step = GPy.models.multiGPRegression(mfDoE, mfDoE_evals)
 
     # mfgpr_step.optimize_restarts(restarts=2)
 

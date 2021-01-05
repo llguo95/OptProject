@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import GPy_MF.models
+import GPy.models
 from sklearn.metrics import r2_score
 from sklearn.preprocessing import StandardScaler
 import os
@@ -83,7 +83,7 @@ Y = [Yl, Yh]
 
 ###
 
-mExp = GPy_MF.models.GPRegression(Xl, Ye_full)
+mExp = GPy.models.GPRegression(Xl, Ye_full)
 
 mExp.optimize(max_iters=4)
 # mExp.param_array[2] = 0.05
@@ -95,7 +95,7 @@ muExp, sigmaExp = mExp.predict(x)
 # print(mExp)
 # print(mExp['Gaussian_noise.variance'])
 
-m = GPy_MF.models.multiGPRegression(X, Y)
+m = GPy.models.multiGPRegression(X, Y)
 
 m.optimize_restarts(restarts=4, verbose=False)
 

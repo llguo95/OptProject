@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import norm
-import GPy_MF.models
+import GPy.models
 from sklearn.preprocessing import StandardScaler
 
 import os
@@ -110,7 +110,7 @@ for i in range(k): # optimization loop
         m = 0
 
     # print(mfDoE_evals)
-    mfgpr_step = GPy_MF.models.multiGPRegression(mfDoE, mfDoE_evals)
+    mfgpr_step = GPy.models.multiGPRegression(mfDoE, mfDoE_evals)
 
     # mfgpr_step.optimize_restarts(restarts=2)
 

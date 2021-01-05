@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import GPy_MF.models
+import GPy.models
 
 np.random.seed(123)
 
@@ -20,7 +20,7 @@ X   =   [Xl,Xh]
 Yl  =   fc(Xl)
 Yh  =   fe(Xh)
 Y   =   [Yl,Yh]
-m   =   GPy_MF.models.multiGPRegression(X, Y)
+m   =   GPy.models.multiGPRegression(X, Y)
 # m.models[0]['Gaussian_noise.variance'].fix(0)
 # m.models[1]['Gaussian_noise.variance'].fix(0)
 # m.optimize_restarts(restarts=100)

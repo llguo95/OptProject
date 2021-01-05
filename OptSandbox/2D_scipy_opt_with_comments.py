@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy
 from scipy.stats import norm
-import GPy_MF.models
+import GPy.models
 from sklearn.preprocessing import StandardScaler
 
 np.random.seed(123)
@@ -62,7 +62,7 @@ print(min_NM)
 # n_features = 2
 # k = 5 # number of iterations
 # for i in range(k): # optimization loop
-#     gpr_step = GPy_MF.models.GPRegression(X_scaled, Y)
+#     gpr_step = GPy.models.GPRegression(X_scaled, Y)
 #     mu, sigma = gpr_step.predict(np.array(x).reshape((1, n_features)))
 #
 #     x = des_grid_scaled[np.argmax(acqEI(des_grid_scaled, gpr_step, X))].reshape(-1, n_features)

@@ -8,7 +8,29 @@ from scipy.optimize import rosen
 
 from scipy.stats import norm
 
-import GPy_MF.models
+import GPy.models
+
+import pandas as pd
+
+# in_1 = np.linspace(50, 200, 10)
+# in_2 = np.linspace(30, 34.18, 10)
+# in_mesh = np.meshgrid(in_1, in_2)
+# in_arr = np.array([layer.reshape(-1, 1) for layer in in_mesh]).squeeze().T
+#
+# output = np.loadtxt('Data/c_Resp_Surface_case6.txt').reshape((100,))
+# df = pd.DataFrame()
+# df.insert(0, 'h0', in_arr[:, 1])
+# df.insert(1, 'rs', in_arr[:, 0])
+# df.insert(2, 'gap', output)
+#
+# print(df)
+
+# df.to_csv('Data/resp_data_LF5.csv', index=False)
+
+df = pd.read_csv('Data/resp_data_HF.csv')
+print(np.array(df[['h0', 'rs']]).reshape((100, 2)))
+
+##############################################################################
 
 # x = np.linspace(0, 1, 10)
 # y = np.sin(2 * np.pi * x)

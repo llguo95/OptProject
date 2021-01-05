@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import GPy_MF.models
+import GPy.models
 
 np.random.seed(123)
 
@@ -24,7 +24,7 @@ for n_it in range(1, 11):
     X = np.array([[-0.5]])
     Y = f(X)
     for i in range(n_it):
-        gpr_step = GPy_MF.models.GPRegression(X, Y)
+        gpr_step = GPy.models.GPRegression(X, Y)
 
         ### HP fixture
         # gpr_step.parameters[0]['rbf.variance'].fix(1)

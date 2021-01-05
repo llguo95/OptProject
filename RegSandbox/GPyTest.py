@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import GPy_MF.models
+import GPy.models
 
 from sklearn.gaussian_process import GaussianProcessRegressor
 
@@ -59,9 +59,9 @@ Yh = fe(Xh)
 
 Y = [Yl, Yh]
 
-m = GPy_MF.models.multiGPRegression(X, Y)
+m = GPy.models.multiGPRegression(X, Y)
 
-# m = GPy_MF.models.GPRegression(Xl, Yl)
+# m = GPy.models.GPRegression(Xl, Yl)
 
 # gpr = GaussianProcessRegressor().fit(Xl, Yl)
 # mu_par, sigma_par = gpr.predict(np.array(x), return_std=True)
