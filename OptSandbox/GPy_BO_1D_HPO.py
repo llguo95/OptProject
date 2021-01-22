@@ -20,7 +20,7 @@ des_grid = np.linspace(-1, 1, 100).reshape(-1, 1)
 
 n_features = 1
 # n_it = 5
-for n_it in range(1, 11):
+for n_it in range(5, 6):
     X = np.array([[-0.5]])
     Y = f(X)
     for i in range(n_it):
@@ -77,4 +77,4 @@ for n_it in range(1, 11):
     for ax in axs1: ax.grid()
 
     # plt.savefig('BO_step_%d.png' % n_it)
-# plt.show()
+plt.show()

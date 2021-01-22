@@ -27,8 +27,10 @@ import pandas as pd
 
 # df.to_csv('Data/resp_data_LF5.csv', index=False)
 
-df = pd.read_csv('Data/resp_data_HF.csv')
-print(np.array(df[['h0', 'rs']]).reshape((100, 2)))
+df = pd.read_csv('test.csv')
+print(df.loc[22, :])
+
+# print(np.array(df[['h0', 'rs']]).reshape((100, 2)))
 
 ##############################################################################
 
