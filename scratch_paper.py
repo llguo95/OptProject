@@ -8,7 +8,7 @@ from scipy.optimize import rosen
 
 from scipy.stats import norm
 
-import GPy.models
+# import GPy.models
 
 import pandas as pd
 
@@ -25,10 +25,20 @@ import pandas as pd
 #
 # print(df)
 
+thisdict = {"brand": "Ford", "model": "Mustang", "year": 1964}
+# thisdict2 = {"brand": "Ford", "model": "Mustang", "year": 1964}
+thisdict2 = {"model": "Mustang", "year": 1964, "brand": "Ford"}
+
+thisset = {'Ford', 'Mustang', 1964}
+
+print(thisdict['bla'] == 3)
+
+###############################################################################
+
 # df.to_csv('Data/resp_data_LF5.csv', index=False)
 
-df = pd.read_csv('test.csv')
-print(df.loc[22, :])
+# df = pd.read_csv('test.csv')
+# print(df.loc[22, :])
 
 # print(np.array(df[['h0', 'rs']]).reshape((100, 2)))
 

@@ -55,7 +55,7 @@ y_pred, sigma_pred = gpr_step.predict(des_grid, return_std=True)
 
 ### Visualization ###
 
-fig1, axs1 = plt.subplots(2, 1, figsize=(5, 8))
+fig1, axs1 = plt.subplots(2, 1, figsize=(4, 6))
 
 axs1[0].plot(des_grid, -f(des_grid), '--', color='r')
 axs1[0].plot(des_grid, -y_pred, 'r', lw=2)
@@ -67,7 +67,7 @@ axs1[0].plot(des_grid, -y_pred.flatten() + 2 * sigma_pred, 'k', lw=.5)
 
 axs1[0].fill_between(des_grid.flatten(), -y_pred.flatten() - 2 * sigma_pred, -y_pred.flatten() + 2 * sigma_pred, alpha=0.2, color='r')
 axs1[0].scatter(X[:-1], -y[:-1], color='r')
-axs1[0].set_xlabel('x')
+# axs1[0].set_xlabel('x')
 axs1[0].set_ylabel('y')
 # axs1[0].set_title('x*cos(x) BO iteration step %d' % k)
 # axs1[0].set_ylim([-3.5, 2.75])
@@ -77,7 +77,7 @@ axs1[1].plot(des_grid, (acq - min(acq)) / (max(acq) - min(acq)), color='r')
 axs1[1].scatter(des_grid[np.argmax(acq)], 1, color='k')
 axs1[1].set_xlabel('x')
 axs1[1].set_ylabel('Acquisition (normalized)')
-axs1[1].set_title('UCB')
+# axs1[1].set_title('UCB')
 
 plt.tight_layout()
 for ax in axs1: ax.grid()
@@ -87,5 +87,5 @@ for ax in axs1: ax.grid()
 # print(-y)
 # print(min(-y))
 
-# plt.savefig('step_%d.png' % (k - 1))
+plt.savefig('BO_step_%d.png' % (k - 1))
 plt.show()

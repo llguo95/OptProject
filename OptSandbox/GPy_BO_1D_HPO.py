@@ -6,30 +6,31 @@ np.random.seed(123)
 
 n = 4
 def f(x):
-    if x.any() == 0:
-        res = np.ones(np.shape(x))
-    else:
-        res = np.sin(x) + np.sin(n * np.pi * x) / (n * np.pi * x)
-    return res
+    # if x.any() == 0:
+    #     res = np.ones(np.shape(x))
+    # else:
+    #     res = np.sin(x) + np.sin(n * np.pi * x) / (n * np.pi * x)
+    # return res
+    return - 10 * x * np.cos(x * 11)
 
-def acqUCB(x, gpr, kappa=3):
+def acqUCB(x, gpr, kappa=2):
     mu, sigma = gpr.predict(np.array(x).reshape(-1, 1))
     return mu + kappa * sigma
 
-des_grid = np.linspace(-1, 1, 100).reshape(-1, 1)
+des_grid = np.linspace(0, 1, 100).reshape(-1, 1)
 
 n_features = 1
 # n_it = 5
-for n_it in range(5, 6):
-    X = np.array([[-0.5]])
+for n_it in range(8, 9):
+    X = np.array([[0.5]])
     Y = f(X)
     for i in range(n_it):
         gpr_step = GPy.models.GPRegression(X, Y)
 
         ### HP fixture
-        # gpr_step.parameters[0]['rbf.variance'].fix(1)
-        gpr_step.parameters[0]['rbf.lengthscale'].fix(0.2)
-        gpr_step.parameters[1]['Gaussian_noise.variance'].fix(0)
+        # gpr_step.parameters[0]['rbf.variance'].fix(10)
+        # gpr_step.parameters[0]['rbf.lengthscale'].fix(0.2)
+        # gpr_step.parameters[1]['Gaussian_noise.variance'].fix(0)
 
         ### HPO
         gpr_step.preferred_optimizer = 'lbfgsb'
@@ -63,7 +64,7 @@ for n_it in range(5, 6):
                          alpha=.2, color='red', label='GPR 95% Confidence bound')
     axs1[0].scatter(X[:-1], -Y[:-1], c='r')
     axs1[0].set_ylabel('y')
-    axs1[0].set_ylim([-1.25, 1.25])
+    # axs1[0].set_ylim([-1.25, 1.25])
 
     for i in range(n_it):
         axs1[0].annotate(i + 1, (X[i], -Y[i]), xytext=(-3.5, 5), textcoords='offset pixels')

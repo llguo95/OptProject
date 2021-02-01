@@ -29,7 +29,7 @@ def acqEI(x_par, gpr, X_train, xi=0):
     return res
 
 def acqUCB(x_par, gpr, X_train, kappa=2):
-    print(x_par)
+    # print(x_par)
     mu_par, sigma_par = gpr.predict(np.array(x_par).reshape(-1, 1))
 
     # mu_par = mu_par[1]
@@ -85,7 +85,7 @@ mfDoE_evals = [np.array([fc(x)]), np.array([fe(x)])]
 mfDoE_evals_hist = [np.array([fc(x)]), np.array([fe(x)])]
 
 n_features = 1
-k = 16 # number of iterations
+k = 5 # number of iterations
 for i in range(k): # optimization loop
     p = np.random.random()
 
@@ -144,7 +144,7 @@ y_pred, sigma_pred = mfgpr_step.predict(des_grid)
 
 ### Visualization ###
 
-fig1, axs1 = plt.subplots(2, 1, figsize=(5, 8))
+fig1, axs1 = plt.subplots(2, 1, figsize=(4, 6))
 
 axs1[0].plot(des_grid, -fe(des_grid), '--', color='orange', label='Expensive function (exact)')
 axs1[0].plot(des_grid, -fc(des_grid), '--', color='blue', label='Cheap function (exact)')
@@ -175,6 +175,7 @@ axs1[0].scatter(mfDoE_hist[0], -mfDoE_evals_hist[0], color='blue')
 # axs1[0].set_title('BO iteration step %d' % k)
 # axs1[0].set_ylim([-3.5, 2.75])
 axs1[0].legend()
+axs1[0].set_ylabel('y')
 
 acq = acqUCB(des_grid, mfgpr_step, mfDoE)
 # print(acq[0])
@@ -187,8 +188,8 @@ axs1[1].set_ylabel('Acquisition (normalized)')
 # axs1[1].set_title('Expected improvement')
 #
 plt.tight_layout()
-
 for ax in axs1: ax.grid()
+plt.savefig('MFBO_step_%d.png' % (k - 1))
 #
 # print(X)
 # print(X[np.argmin(-y)])

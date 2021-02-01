@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import GPy.models
-
+from sklearn.metrics import r2_score
 from scipy.stats import multivariate_normal
 
 from test_funs import *
@@ -14,9 +14,9 @@ def f(x):
     x = scaler.inverse_transform(x)
 
     # return -rosenbrock(x)[0]
-    return -schwefel(x)[0]
     # return -ackley(x)[0]
     # return -levy(x)[0]
+    return -schwefel(x)[0]
 
     # return np.array([[multivariate_normal.pdf(x, mean=[0, 0])]])
     # return np.array([10 * np.cos(np.pi / 2 * x[:, 0]) * np.cos(np.pi / 4 * x[:, 1])])
@@ -39,8 +39,8 @@ x_arr_tf = scaler.transform(x_arr)
 # x_arr = np.vstack(np.array(x_mesh).T)
 
 n_it = 49
-# X = np.array([[0, 0]])
-X = np.array([[1, 1]])
+X = np.array([[0, 0]])
+# X = np.array([[1, 1]])
 X_tf = scaler.transform(X)
 Y = f(X_tf)
 n_features = 2
@@ -48,9 +48,9 @@ for i in range(n_it):
     gpr_step = GPy.models.GPRegression(X_tf, Y)
 
     ### HP fixture
-    # gpr_step.parameters[0]['rbf.variance'].fix(1e6)
-    gpr_step.parameters[0]['rbf.lengthscale'].fix(.2)
-    # gpr_step.parameters[1]['Gaussian_noise.variance'].fix(.5)
+    gpr_step.parameters[0]['rbf.variance'].fix(1e6)
+    # gpr_step.parameters[0]['rbf.lengthscale'].fix(.2)
+    gpr_step.parameters[1]['Gaussian_noise.variance'].fix(0)
 
     ### HPO
     # gpr_step.preferred_optimizer = 'lbfgsb'
@@ -72,6 +72,8 @@ for i in range(n_it):
     X_tf = np.append(X_tf, x_tf).reshape(-1, n_features)
 
     Y = np.append(Y, y).reshape(-1, 1)
+
+# gpr_step.optimize_restarts(num_restarts=4, verbose=False)
 
 mu_arr, sigma_arr = gpr_step.predict(x_arr_tf)
 
@@ -98,6 +100,8 @@ cf[3] = axs[1, 1].contourf(x_mesh[0], x_mesh[1], acq_norm.reshape(np.shape(x_mes
 axs[1, 1].set_title('Acquisition (UCB, normalized)')
 fig1.colorbar(cf[3], ax=axs[1, 1])
 
+plt.tight_layout()
+
 k = 0
 for i in range(2):
     for j in range(2):
@@ -118,27 +122,35 @@ print('in:', X[np.argmin(-Y)])
 print('out:', min(-Y))
 print()
 print(gpr_step)
+print()
+print(r2_score(f(x_arr_tf), mu_arr))
 
-# x1_c = x1[::19]; x2_c = x2[::19]
-# x_mesh_c = np.meshgrid(x1_c, x2_c)
-# x_arr_c = np.hstack([layer.reshape(-1, 1) for layer in x_mesh_c])
-# scaler_c = StandardScaler()
-# scaler_c.fit(x_arr_c)
-# x_arr_c_tf = scaler_c.transform(x_arr_c)
-#
-# X_reg_data_tf = X_tf[:-1]
-#
-# gpr_c = GPy.models.GPRegression(X_reg_data_tf, f(X_reg_data_tf))
-#
-# gpr_c.parameters[1]['Gaussian_noise.variance'].fix(0)
-# mu_arr_c, sigma_arr_c = gpr_c.predict(x_arr_tf)
-#
-# plt.figure()
-# cf_gpr = plt.contourf(x_mesh[0], x_mesh[1], -mu_arr_c.reshape(np.shape(x_mesh[0])), levels=lvs(-mu_arr_c))
-# plt.scatter(scaler.inverse_transform(X_reg_data_tf)[:, 0], scaler.inverse_transform(X_reg_data_tf)[:, 1])
-# plt.contour(cf_gpr, colors='k', linewidths=.1)
+x1_c = x1[::9]
+x2_c = x2[::9]
+x_mesh_c = np.meshgrid(x1_c, x2_c)
+x_arr_c = np.hstack([layer.reshape(-1, 1) for layer in x_mesh_c])
+scaler_c = StandardScaler()
+scaler_c.fit(x_arr_c)
+x_arr_c_tf = scaler_c.transform(x_arr_c)
 
-# plt.savefig('test1.svg')
+X_reg_data_tf = x_arr_c_tf
+
+gpr_c = GPy.models.GPRegression(X_reg_data_tf, f(X_reg_data_tf))
+
+# gpr_c.optimize_restarts(num_restarts=4, verbose=False)
+gpr_c.parameters[0]['rbf.variance'].fix(1e6)
+gpr_c.parameters[0]['rbf.lengthscale'].fix(1)
+gpr_c.parameters[1]['Gaussian_noise.variance'].fix(0)
+mu_arr_c, sigma_arr_c = gpr_c.predict(x_arr_tf)
+
+plt.figure()
+cf_gpr = plt.contourf(x_mesh[0], x_mesh[1], -mu_arr_c.reshape(np.shape(x_mesh[0])), levels=lvs(-mu_arr_c))
+plt.scatter(scaler.inverse_transform(X_reg_data_tf)[:, 0], scaler.inverse_transform(X_reg_data_tf)[:, 1])
+plt.contour(cf_gpr, colors='k', linewidths=.1)
+
+print(gpr_c)
+
+# plt.savefig('schwefel_BO_HPO.png')
 
 plt.show()
 
