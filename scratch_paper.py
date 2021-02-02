@@ -88,10 +88,5 @@ print(thisdict['bla'] == 3)
 
 # a = np.loadtxt('OptSandbox/ProgTxt/in_iter_1.csv')
 
-# a = np.array([float('1')])
-# print(np.shape(a))
-
-# a = np.array([1, 2, 3])
-# print(a)
-# a = np.array(a)
-# print(a)
+a = np.array([float('1')])
+print(np.shape(a))

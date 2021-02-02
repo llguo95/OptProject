@@ -39,6 +39,7 @@ x_arr_tf = scaler.transform(x_arr)
 # x_arr = np.vstack(np.array(x_mesh).T)
 
 n_it = 49
+print(x_arr_tf)
 X = np.array([[0, 0]])
 # X = np.array([[1, 1]])
 X_tf = scaler.transform(X)
@@ -48,14 +49,15 @@ for i in range(n_it):
     gpr_step = GPy.models.GPRegression(X_tf, Y)
 
     ### HP fixture
-    gpr_step.parameters[0]['rbf.variance'].fix(1e6)
+    # gpr_step.parameters[0]['rbf.variance'].fix(1e6)
     # gpr_step.parameters[0]['rbf.lengthscale'].fix(.2)
-    gpr_step.parameters[1]['Gaussian_noise.variance'].fix(0)
+    # gpr_step.parameters[1]['Gaussian_noise.variance'].fix(0)
 
     ### HPO
     # gpr_step.preferred_optimizer = 'lbfgsb'
-    # if True:
-    #     gpr_step.optimize_restarts(num_restarts=4, verbose=False)
+    if True:
+        gpr_step.optimize_restarts(num_restarts=4, verbose=False)
+    print(gpr_step)
 
     x_tf = x_arr_tf[np.argmax(acqUCB(x_arr_tf, gpr_step))]
 
@@ -125,30 +127,30 @@ print(gpr_step)
 print()
 print(r2_score(f(x_arr_tf), mu_arr))
 
-x1_c = x1[::9]
-x2_c = x2[::9]
-x_mesh_c = np.meshgrid(x1_c, x2_c)
-x_arr_c = np.hstack([layer.reshape(-1, 1) for layer in x_mesh_c])
-scaler_c = StandardScaler()
-scaler_c.fit(x_arr_c)
-x_arr_c_tf = scaler_c.transform(x_arr_c)
-
-X_reg_data_tf = x_arr_c_tf
-
-gpr_c = GPy.models.GPRegression(X_reg_data_tf, f(X_reg_data_tf))
-
+# x1_c = x1[::9]
+# x2_c = x2[::9]
+# x_mesh_c = np.meshgrid(x1_c, x2_c)
+# x_arr_c = np.hstack([layer.reshape(-1, 1) for layer in x_mesh_c])
+# scaler_c = StandardScaler()
+# scaler_c.fit(x_arr_c)
+# x_arr_c_tf = scaler_c.transform(x_arr_c)
+#
+# X_reg_data_tf = x_arr_c_tf
+#
+# gpr_c = GPy.models.GPRegression(X_reg_data_tf, f(X_reg_data_tf))
+#
 # gpr_c.optimize_restarts(num_restarts=4, verbose=False)
-gpr_c.parameters[0]['rbf.variance'].fix(1e6)
-gpr_c.parameters[0]['rbf.lengthscale'].fix(1)
-gpr_c.parameters[1]['Gaussian_noise.variance'].fix(0)
-mu_arr_c, sigma_arr_c = gpr_c.predict(x_arr_tf)
-
-plt.figure()
-cf_gpr = plt.contourf(x_mesh[0], x_mesh[1], -mu_arr_c.reshape(np.shape(x_mesh[0])), levels=lvs(-mu_arr_c))
-plt.scatter(scaler.inverse_transform(X_reg_data_tf)[:, 0], scaler.inverse_transform(X_reg_data_tf)[:, 1])
-plt.contour(cf_gpr, colors='k', linewidths=.1)
-
-print(gpr_c)
+# # gpr_c.parameters[0]['rbf.variance'].fix(1e6)
+# # gpr_c.parameters[0]['rbf.lengthscale'].fix(1)
+# # gpr_c.parameters[1]['Gaussian_noise.variance'].fix(0)
+# mu_arr_c, sigma_arr_c = gpr_c.predict(x_arr_tf)
+#
+# plt.figure()
+# cf_gpr = plt.contourf(x_mesh[0], x_mesh[1], -mu_arr_c.reshape(np.shape(x_mesh[0])), levels=lvs(-mu_arr_c))
+# plt.scatter(scaler.inverse_transform(X_reg_data_tf)[:, 0], scaler.inverse_transform(X_reg_data_tf)[:, 1])
+# plt.contour(cf_gpr, colors='k', linewidths=.1)
+#
+# print(gpr_c)
 
 # plt.savefig('schwefel_BO_HPO.png')
 
