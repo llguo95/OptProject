@@ -25,13 +25,13 @@ import pandas as pd
 #
 # print(df)
 
-thisdict = {"brand": "Ford", "model": "Mustang", "year": 1964}
-# thisdict2 = {"brand": "Ford", "model": "Mustang", "year": 1964}
-thisdict2 = {"model": "Mustang", "year": 1964, "brand": "Ford"}
-
-thisset = {'Ford', 'Mustang', 1964}
-
-print(thisdict['bla'] == 3)
+# thisdict = {"brand": "Ford", "model": "Mustang", "year": 1964}
+# # thisdict2 = {"brand": "Ford", "model": "Mustang", "year": 1964}
+# thisdict2 = {"model": "Mustang", "year": 1964, "brand": "Ford"}
+#
+# thisset = {'Ford', 'Mustang', 1964}
+#
+# print(thisdict['bla'] == 3)
 
 ###############################################################################
 
@@ -88,5 +88,8 @@ print(thisdict['bla'] == 3)
 
 # a = np.loadtxt('OptSandbox/ProgTxt/in_iter_1.csv')
 
-a = np.array([float('1')])
-print(np.shape(a))
+# a = np.array([float('1')])
+# print(np.shape(a))
+
+a, _ = (1, 2)
+print(_)

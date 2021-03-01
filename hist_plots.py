@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 from test_funs import *
-from GPy_BO_func import *
+from GPy_BO_func_old import *
 
 ######
 

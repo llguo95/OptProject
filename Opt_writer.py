@@ -1,6 +1,6 @@
 # from test_funs import *
 import pandas as pd
-from GPy_BO_func import *
+from GPy_BO_func_old import *
 from openpyxl import load_workbook
 
 path = r'Benchmark_data/newdata.xlsx'

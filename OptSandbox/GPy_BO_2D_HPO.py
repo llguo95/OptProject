@@ -49,15 +49,15 @@ for i in range(n_it):
     gpr_step = GPy.models.GPRegression(X_tf, Y)
 
     ### HP fixture
-    # gpr_step.parameters[0]['rbf.variance'].fix(1e6)
+    gpr_step.parameters[0]['rbf.variance'].fix(1e6)
     # gpr_step.parameters[0]['rbf.lengthscale'].fix(.2)
-    # gpr_step.parameters[1]['Gaussian_noise.variance'].fix(0)
+    gpr_step.parameters[1]['Gaussian_noise.variance'].fix(0)
 
     ### HPO
     # gpr_step.preferred_optimizer = 'lbfgsb'
-    if True:
-        gpr_step.optimize_restarts(num_restarts=4, verbose=False)
-    print(gpr_step)
+    # if True:
+    #     gpr_step.optimize_restarts(num_restarts=4, verbose=False)
+    # print(gpr_step)
 
     x_tf = x_arr_tf[np.argmax(acqUCB(x_arr_tf, gpr_step))]
 
