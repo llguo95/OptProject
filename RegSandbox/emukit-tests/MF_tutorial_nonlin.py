@@ -44,11 +44,7 @@ y_train_h = high_fidelity(x_train_h)
 
 ### Convert lists of arrays to ND-arrays augmented with fidelity indicators
 
-# print(x_train_l, x_train_h)
-
 X_train, Y_train = convert_xy_lists_to_arrays([x_train_l, x_train_h], [y_train_l, y_train_h])
-
-# print(X_train)
 
 plt.figure(figsize=(12, 8))
 plt.plot(x_plot, y_plot_l, 'b')
@@ -87,7 +83,9 @@ lin_mf_model.optimize()
 
 ## Convert test points to appropriate representation
 
+# print(x_plot)
 X_plot = convert_x_list_to_array([x_plot, x_plot])
+# print(X_plot)
 X_plot_low = X_plot[:200]
 X_plot_high = X_plot[200:]
 
@@ -96,6 +94,8 @@ X_plot_high = X_plot[200:]
 hf_mean_lin_mf_model, hf_var_lin_mf_model = lin_mf_model.predict(X_plot_high)
 hf_std_lin_mf_model = np.sqrt(hf_var_lin_mf_model)
 
+lf_mean_lin_mf_model, lf_var_lin_mf_model = lin_mf_model.predict(X_plot_low)
+lf_std_lin_mf_model = np.sqrt(lf_var_lin_mf_model)
 
 ## Compare linear and nonlinear model fits
 
@@ -137,7 +137,6 @@ hf_std_nonlin_mf_model = np.sqrt(hf_var_nonlin_mf_model)
 lf_mean_nonlin_mf_model, lf_var_nonlin_mf_model = nonlin_mf_model.predict(X_plot_low)
 lf_std_nonlin_mf_model = np.sqrt(lf_var_nonlin_mf_model)
 
-
 ## Plot posterior mean and variance of nonlinear multi-fidelity model
 
 plt.figure(figsize=(12,8))
@@ -163,7 +162,8 @@ plt.ylabel('HF(x)')
 plt.xlabel('LF(x)')
 plt.plot(y_plot_l, y_plot_h, '-', color=colors['purple'])
 plt.plot(lf_mean_nonlin_mf_model, hf_mean_nonlin_mf_model, 'k--')
-plt.legend(['True HF-LF Correlation', 'Learned HF-LF Correlation'], loc='lower center')
+plt.plot(lf_mean_lin_mf_model, hf_mean_lin_mf_model, 'r--')
+plt.legend(['True HF-LF Correlation', 'Learned HF-LF Correlation (nonlinear)', 'Learned HF-LF Correlation (linear)'], loc='lower center')
 plt.title('Mapping from low fidelity to high fidelity')
 
 plt.show()

@@ -10,7 +10,12 @@ from scipy.stats import norm
 
 # import GPy.models
 
-import pandas as pd
+# import pandas as pd
+
+a = b = 1
+print(a, b)
+a = 2
+print(a, b)
 
 # in_1 = np.linspace(50, 200, 10)
 # in_2 = np.linspace(30, 34.18, 10)
@@ -91,5 +96,5 @@ import pandas as pd
 # a = np.array([float('1')])
 # print(np.shape(a))
 
-a, _ = (1, 2)
-print(_)
+# a, _ = (1, 2)
+# print(_)
