@@ -83,9 +83,7 @@ lin_mf_model.optimize()
 
 ## Convert test points to appropriate representation
 
-# print(x_plot)
 X_plot = convert_x_list_to_array([x_plot, x_plot])
-# print(X_plot)
 X_plot_low = X_plot[:200]
 X_plot_high = X_plot[200:]
 
@@ -126,6 +124,7 @@ for m in nonlin_mf_model.models:
     m.Gaussian_noise.variance.fix(0)
 
 nonlin_mf_model.optimize()
+print(nonlin_mf_model.models[1])
 
 ####
 
@@ -166,4 +165,4 @@ plt.plot(lf_mean_lin_mf_model, hf_mean_lin_mf_model, 'r--')
 plt.legend(['True HF-LF Correlation', 'Learned HF-LF Correlation (nonlinear)', 'Learned HF-LF Correlation (linear)'], loc='lower center')
 plt.title('Mapping from low fidelity to high fidelity')
 
-plt.show()
+# plt.show()
