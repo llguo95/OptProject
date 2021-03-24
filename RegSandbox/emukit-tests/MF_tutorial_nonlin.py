@@ -46,6 +46,8 @@ y_train_h = high_fidelity(x_train_h)
 
 X_train, Y_train = convert_xy_lists_to_arrays([x_train_l, x_train_h], [y_train_l, y_train_h])
 
+# print(X_train)
+
 plt.figure(figsize=(12, 8))
 plt.plot(x_plot, y_plot_l, 'b')
 plt.plot(x_plot, y_plot_h, 'r')
@@ -71,10 +73,11 @@ plt.legend(['HF-LF Correlation'], loc='lower center')
 kernels = [GPy.kern.RBF(1), GPy.kern.RBF(1)]
 lin_mf_kernel = emukit.multi_fidelity.kernels.LinearMultiFidelityKernel(kernels)
 gpy_lin_mf_model = GPyLinearMultiFidelityModel(X_train, Y_train, lin_mf_kernel, n_fidelities=2)
+# print(gpy_lin_mf_model)
 gpy_lin_mf_model.mixed_noise.Gaussian_noise.fix(0)
 gpy_lin_mf_model.mixed_noise.Gaussian_noise_1.fix(0)
 
-lin_mf_model = model = GPyMultiOutputWrapper(gpy_lin_mf_model, 2, n_optimization_restarts=5)
+lin_mf_model = model = GPyMultiOutputWrapper(gpy_lin_mf_model, 2, n_optimization_restarts=5, verbose_optimization=False)
 
 ## Fit the model
 lin_mf_model.optimize()
@@ -83,7 +86,9 @@ lin_mf_model.optimize()
 
 ## Convert test points to appropriate representation
 
+# print(x_plot)
 X_plot = convert_x_list_to_array([x_plot, x_plot])
+# print(X_plot)
 X_plot_low = X_plot[:200]
 X_plot_high = X_plot[200:]
 
@@ -118,12 +123,16 @@ from emukit.multi_fidelity.models.non_linear_multi_fidelity_model import make_no
 
 base_kernel = GPy.kern.RBF
 kernels = make_non_linear_kernels(base_kernel, 2, X_train.shape[1] - 1)
+# print(kernels)
 nonlin_mf_model = NonLinearMultiFidelityModel(X_train, Y_train, n_fidelities=2, kernels=kernels,
-                                              verbose=True, optimization_restarts=5)
+                                              verbose=False, optimization_restarts=5)
+# print(nonlin_mf_model.models[0])
+# print(nonlin_mf_model.models[1])
 for m in nonlin_mf_model.models:
     m.Gaussian_noise.variance.fix(0)
 
 nonlin_mf_model.optimize()
+print(nonlin_mf_model.models[0])
 print(nonlin_mf_model.models[1])
 
 ####

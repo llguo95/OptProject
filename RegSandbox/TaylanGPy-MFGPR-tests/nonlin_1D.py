@@ -65,6 +65,7 @@ Yh = fe(Xh)
 Y = [Yl, Yh]
 
 m = GPy.models.multiGPRegression(X, Y)
+# print(X)
 
 # m = GPy.models.GPRegression(Xl, Yl)
 
