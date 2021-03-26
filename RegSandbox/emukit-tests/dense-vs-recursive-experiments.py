@@ -13,9 +13,11 @@ import test_funs
 
 np.random.seed(20)
 
-f_1 = test_funs.ackley
+def f_1(x):
+    return test_funs.ackley(x)[0]
+
 def f_0(x): # Linear perturbation
-    return 5 * f_1(x)[0] + (x - 0.5) + 2
+    return 5 * f_1(x) + (x - 0.5) + 2
 
 x_plot = np.linspace(0, 1, 200)[:, None]
 y_plot_0 = f_0(x_plot)
@@ -30,7 +32,7 @@ x_train_0 = np.linspace(-2, 2, n_0)[:, None] # Uniform initial DoE... would need
 y_train_0 = f_0(x_train_0)
 
 x_train_1 = np.random.permutation(x_train_0)[:n_1] # This is the nested DoE experiment.
-y_train_1 = f_1(x_train_1)[0]
+y_train_1 = f_1(x_train_1)
 
 X_train, Y_train = convert_xy_lists_to_arrays([x_train_0, x_train_1], [y_train_0, y_train_1])
 
@@ -44,7 +46,7 @@ start = time.time()
 gpy_m_den = GPyLinearMultiFidelityModel(X_train, Y_train, lin_mf_kernel, n_fidelities=2)
 
 end = time.time()
-print('dense', end - start)
+# print('dense', end - start)
 
 gpy_m_den.mixed_noise.Gaussian_noise.fix(0)
 gpy_m_den.mixed_noise.Gaussian_noise_1.fix(0)
@@ -69,7 +71,7 @@ start = time.time()
 m_rec = GPy.models.multiGPRegression([x_train_0, x_train_1], [y_train_0, y_train_1])
 
 end = time.time()
-print('recursive', end - start)
+# print('recursive', end - start)
 
 m_rec.models[0]['Gaussian_noise.variance'].fix(0)
 m_rec.models[1]['Gaussian_noise.variance'].fix(0)
