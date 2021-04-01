@@ -59,17 +59,19 @@ start = time.time()
 
 gpy_m_den = GPyLinearMultiFidelityModel(X_train, Y_train, lin_mf_kernel, n_fidelities=3)
 
-end = time.time()
-print('dense', end - start)
+end1 = time.time()
+print('dense', end1 - start)
 
 gpy_m_den.mixed_noise.Gaussian_noise.fix(0)
 gpy_m_den.mixed_noise.Gaussian_noise_1.fix(0)
 gpy_m_den.mixed_noise.Gaussian_noise_2.fix(0)
 
-m_den = GPyMultiOutputWrapper(gpy_m_den, 3, n_optimization_restarts=5, verbose_optimization=False)
+m_den = GPyMultiOutputWrapper(gpy_m_den, 3, n_optimization_restarts=4, verbose_optimization=False)
 
 m_den.optimize()
-print(gpy_m_den)
+end2 = time.time()
+print('dense + HPO', end2 - start)
+# print(gpy_m_den)
 
 # Prediction
 X_plot = convert_x_list_to_array([x_plot, x_plot, x_plot])
@@ -87,14 +89,16 @@ start = time.time()
 
 m_rec = GPy.models.multiGPRegression([x_train_0, x_train_1, x_train_2], [y_train_0, y_train_1, y_train_2])
 
-end = time.time()
-print('recursive', end - start)
+end3 = time.time()
+print('recursive', end3 - start)
 
 m_rec.models[0]['Gaussian_noise.variance'].fix(0)
 m_rec.models[1]['Gaussian_noise.variance'].fix(0)
 m_rec.models[2]['Gaussian_noise.variance'].fix(0)
 
-m_rec.optimize_restarts(restarts=5, verbose=False)
+m_rec.optimize_restarts(restarts=4, verbose=False)
+end4 = time.time()
+print('recursive + HPO', end4 - start)
 # print(m_rec)
 
 mu_rec, sigma_rec = m_rec.predict(x_plot)
