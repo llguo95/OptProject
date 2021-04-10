@@ -127,6 +127,8 @@ print(m_rec_mf.models[0])
 end3 = time.time()
 print('recursive', end3 - start)
 
+for k in range(m): m_rec_mf.models[k]['Gaussian_noise.variance'].fix(0)
+
 # m_rec.models[0]['Gaussian_noise.variance'].fix(0)
 # m_rec.models[1]['Gaussian_noise.variance'].fix(0)
 # m_rec.models[2]['Gaussian_noise.variance'].fix(0)
