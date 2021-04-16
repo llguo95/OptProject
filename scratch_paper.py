@@ -12,10 +12,14 @@ from scipy.stats import norm
 
 # import pandas as pd
 
-a = b = 1
-print(a, b)
-a = 2
-print(a, b)
+a = [1, 2, 3]
+b = [4, 5, 6]
+print([(i, j) for i, j in zip(a, b)])
+
+# a = b = 1
+# print(a, b)
+# a = 2
+# print(a, b)
 
 # in_1 = np.linspace(50, 200, 10)
 # in_2 = np.linspace(30, 34.18, 10)

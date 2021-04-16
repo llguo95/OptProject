@@ -20,7 +20,7 @@ np.random.seed(123)
 n_fid = 4
 
 ### Dimension number ###
-x_dim = 2
+x_dim = 3
 
 #################
 ### Functions ###
@@ -73,28 +73,30 @@ def f(x, fid):
 
 ### Plotting data ###
 
-x1_min = -5; x1_max = 5
-x2_min = -5; x2_max = 5
-x1_plot = np.linspace(x1_min, x1_max, 150)[:, None]
-x2_plot = np.linspace(x2_min, x2_max, 150)[:, None]
-
-x_plot_mesh = np.meshgrid(x1_plot, x2_plot)
-x_plot = np.hstack([layer.reshape(-1, 1) for layer in x_plot_mesh])
-
-# y_plot = [f(x_plot, fid) for fid in range(m)]
-
-X_plot_mf = convert_x_list_to_array([x_plot] * n_fid)
-X_plot_mf_list = X_plot_mf.reshape((n_fid, len(x_plot), x_dim + 1))
-
-n = [81, 64, 36, 16]
-
-x_train = [x_plot[::len(x_plot) // n_i] for n_i in n]
-y_train = [f(x_train[j], j) for j in range(n_fid)]
-
-# print(x_train[2])
-# print(f(x_train[0], 0))
-
-X_train_mf, Y_train_mf = convert_xy_lists_to_arrays(x_train, y_train)
+# x1_min = -5; x1_max = 5
+# x2_min = -5; x2_max = 5
+# x1_plot = np.linspace(x1_min, x1_max, 150)[:, None]
+# x2_plot = np.linspace(x2_min, x2_max, 150)[:, None]
+#
+# x_plot_mesh = np.meshgrid(x1_plot, x2_plot)
+# x_plot = np.hstack([layer.reshape(-1, 1) for layer in x_plot_mesh])
+#
+# # y_plot = [f(x_plot, fid) for fid in range(m)]
+#
+# X_plot_mf = convert_x_list_to_array([x_plot] * n_fid)
+# X_plot_mf_list = X_plot_mf.reshape((n_fid, len(x_plot), x_dim + 1))
+#
+# ### Training data ###
+#
+# n = [81, 64, 36, 16]
+#
+# x_train = [x_plot[::len(x_plot) // n_i] for n_i in n]
+# y_train = [f(x_train[j], j) for j in range(n_fid)]
+#
+# # print(x_train[2])
+# # print(f(x_train[0], 0))
+#
+# X_train_mf, Y_train_mf = convert_xy_lists_to_arrays(x_train, y_train)
 
 ##########
 ### dD ###
@@ -103,67 +105,89 @@ X_train_mf, Y_train_mf = convert_xy_lists_to_arrays(x_train, y_train)
 ### Plotting data ###
 
 x_min = [-5] * x_dim
-print(x_min)
+x_max = [5] * x_dim
+x_plot_grid = [np.linspace(x_min[j], x_max[j], 50)[:, None] for j in range(x_dim)]
+x_plot_mesh = np.meshgrid(*x_plot_grid)
+x_plot_list = np.hstack([layer.reshape(-1, 1) for layer in x_plot_mesh])
+
+X_plot_mf = convert_x_list_to_array([x_plot_list] * n_fid)
+X_plot_mf_list = X_plot_mf.reshape((n_fid, len(x_plot_list), x_dim + 1))
+
+### Training data ###
+
+n = [5 * (n_fid - i) for i in range(n_fid)] # Include possibility to insert training data of choice.
+
+x_train = [x_plot_list[::len(x_plot_list) // n_i] for n_i in n] # Include possibility to insert training data of choice.
+y_train = [f(x_train[j], j) for j in range(n_fid)]
+
+X_train_mf, Y_train_mf = convert_xy_lists_to_arrays(x_train, y_train)
 
 ############################
 ### DENSE GP CALCULATION ###
 ############################
+
+n_opt_restarts = 3
 
 kernels_mf = []
 for k in range(n_fid): kernels_mf.append(GPy.kern.RBF(input_dim=x_dim))
 
 lin_mf_kernel = emukit.multi_fidelity.kernels.LinearMultiFidelityKernel(kernels_mf)
 
-start = time.time()
+start_den = time.time()
 
 gpy_m_den_mf = GPyLinearMultiFidelityModel(X_train_mf, Y_train_mf, lin_mf_kernel, n_fidelities=n_fid)
 
-end1 = time.time()
-
-print('Dense MFGPR construction', end1 - start)
-
+### Fixing kernel parameters ###
 for k in range(n_fid): gpy_m_den_mf.mixed_noise.likelihoods_list[k].fix(0)
 # print(gpy_m_den_mf)
 
-m_den_mf = GPyMultiOutputWrapper(gpy_m_den_mf, n_fid, n_optimization_restarts=4, verbose_optimization=True)
+m_den_mf = GPyMultiOutputWrapper(gpy_m_den_mf, n_fid, n_optimization_restarts=n_opt_restarts, verbose_optimization=True)
+
+end_den_1 = time.time()
+print('Dense MFGPR construction', end_den_1 - start_den)
 
 ### Dense HPO ###
 m_den_mf_pre_HPO = m_den_mf
-# m_den_mf.optimize()
+m_den_mf.optimize()
 
-end2 = time.time()
-
+end_den_2 = time.time()
+print('Dense MFGPR construction + HPO', end_den_2 - start_den)
 # print(gpy_m_den_mf)
-print('Dense MFGPR construction + HPO', end2 - start)
 
 ### Prediction ###
 mu_den_mf = [m_den_mf.predict(X_plot_mf_list[j])[0] for j in range(n_fid)]
 sigma_den_mf = [m_den_mf.predict(X_plot_mf_list[j])[1] for j in range(n_fid)]
 
+end_den_3 = time.time()
+print('Dense MFGPR construction + HPO + prediction', end_den_3 - start_den)
+
 ################################
 ### RECURSIVE GP CALCULATION ###
 ################################
 
-start = time.time()
+start_rec = time.time()
 
 m_rec_mf = GPy.models.multiGPRegression(x_train, y_train, kernel=[GPy.kern.RBF(x_dim) for i in range(n_fid)]) # Improve kernel selection...?
 
-end3 = time.time()
-print('Recursive MFGPR construction', end3 - start)
+end_rec_1 = time.time()
+print('Recursive MFGPR construction', end_rec_1 - start_rec)
 
 for k in range(n_fid): m_rec_mf.models[k]['Gaussian_noise.variance'].fix(0)
 
 ### Recursive HPO ###
 m_rec_mf_pre_HPO = m_rec_mf
-# m_rec_mf.optimize_restarts(restarts=4, verbose=False)
+m_rec_mf.optimize_restarts(restarts=n_opt_restarts, verbose=True)
 
-end4 = time.time()
-print('Recursive MFGPR construction + HPO', end4 - start)
+end_rec_2 = time.time()
+print('Recursive MFGPR construction + HPO', end_rec_2 - start_rec)
 
 # for k in range(m): print(m_rec_mf.models[k])
 
 ### Prediction ###
-mu_rec_mf, sigma_rec_mf = m_rec_mf.predict(x_plot)
+mu_rec_mf, sigma_rec_mf = m_rec_mf.predict(x_plot_list)
+
+end_rec_3 = time.time()
+print('Recursive MFGPR construction + HPO + prediction', end_rec_3 - start_rec)
 
 #####################
 ### VISUALIZATION ###
