@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 import GPy
+from GPy.core import GP, multiGP
 
 import emukit.multi_fidelity
 from emukit.model_wrappers.gpy_model_wrappers import GPyMultiOutputWrapper
@@ -12,7 +13,7 @@ class MFGP:
     """
     A wrapper for currently existing linear multi-fidelity Gaussian process regression
     """
-    def __init__(self, X: np.ndarray, Y: np.ndarray, kernel: GPy.kern.Kern, n_fidelities: int,
+    def __init__(self, X: np.ndarray, Y: np.ndarray, kernel: GPy.kern.Kern, n_fidelities: int, mf_type: str,
                  likelihood: GPy.likelihoods.Likelihood=None):
         """
 
@@ -45,4 +46,10 @@ class MFGP:
             likelihood = GPy.likelihoods.mixed_noise.MixedNoise(
                 [GPy.likelihoods.Gaussian(variance=1.) for _ in range(n_fidelities)])
         y_metadata = {'output_index': X[:, -1].astype(int)}
-        super().__init__(X, Y, kernel, likelihood, Y_metadata=y_metadata)
+
+        if mf_type == 'autoregressive':
+            GP(X, Y, kernel, likelihood)
+        elif mf_type == 'recursive':
+            multiGP(X=X, Y=Y, kernel=kernel, Y_metadata=y_metadata)
+        else:
+            raise ValueError('mf_type must be autoregressive or recursive')

@@ -16,14 +16,14 @@ import test_funs
 
 np.random.seed(123)
 
-# ### Fidelity number ###
-# n_fid = 4
-#
-# ### Dimension number ###
-# x_dim = 3
+### Fidelity number ###
+n_fid = 3
+
+### Dimension number ###
+x_dim = 1
 
 ### (No. of) input data points ###
-# n = [5 * (n_fid - i) for i in range(n_fid)]  # Include possibility to insert training data of choice.
+n = [5 * (n_fid - i) for i in range(n_fid)]  # Include possibility to insert training data of choice.
 
 def denvsrecmain(n_fid, x_dim, n):
     #################
@@ -82,12 +82,17 @@ def denvsrecmain(n_fid, x_dim, n):
     for k in range(n_fid): kernels_mf.append(GPy.kern.RBF(input_dim=x_dim))
 
     lin_mf_kernel = emukit.multi_fidelity.kernels.LinearMultiFidelityKernel(kernels_mf)
+    # print(lin_mf_kernel)
+    # print(lin_mf_kernel.kernels[0])
 
     start_den = time.time()
 
+    # print(X_train_mf)
     gpy_m_den_mf = GPyLinearMultiFidelityModel(X_train_mf, Y_train_mf, lin_mf_kernel, n_fidelities=n_fid)
+    # print(gpy_m_den_mf)
 
     ### Fixing kernel parameters ###
+
     for k in range(n_fid): gpy_m_den_mf.mixed_noise.likelihoods_list[k].fix(0)
     # print(gpy_m_den_mf)
 
@@ -101,12 +106,30 @@ def denvsrecmain(n_fid, x_dim, n):
     m_den_mf_pre_HPO = m_den_mf
     m_den_mf.optimize()
 
+    print(gpy_m_den_mf)
+    # print(gpy_m_den_mf.kern)
+
+    # print(lin_mf_kernel)
+    # print(lin_mf_kernel.kernels[0])
+
+    # print(X_train_mf)
+    # test = lin_mf_kernel.K(X=X_train_mf)
+    # print(test)
+    # print(lin_mf_kernel)
+
     end_den_2 = time.time()
     # print('Dense MFGPR construction + HPO', end_den_2 - start_den)
     # print(gpy_m_den_mf)
 
     ### Prediction ###
-    # mu_den_mf = [m_den_mf.predict(X_plot_mf_list[j])[0] for j in range(n_fid)]
+    # for j in range(n_fid):
+    #     a = time.time()
+    #     test = m_den_mf.predict(X_plot_mf_list[j])
+    #     b = time.time()
+    #     print(b - a)
+    mu_den_mf = [m_den_mf.predict(X_plot_mf_list[j])[0] for j in range(n_fid)]
+    # print(X_plot_mf_list)
+    # print(mu_den_mf)
     # sigma_den_mf = [m_den_mf.predict(X_plot_mf_list[j])[1] for j in range(n_fid)]
     #
     # end_den_3 = time.time()
@@ -118,17 +141,18 @@ def denvsrecmain(n_fid, x_dim, n):
 
     start_rec = time.time()
 
-    m_rec_mf = GPy.models.multiGPRegression(x_train, y_train, kernel=[GPy.kern.RBF(x_dim) for i in
-                                                                      range(n_fid)])  # Improve kernel selection...?
+    # m_rec_mf = GPy.models.multiGPRegression(x_train, y_train, kernel=[GPy.kern.RBF(x_dim) for i in
+    #                                                                   range(n_fid)])  # Improve kernel selection...?
 
     end_rec_1 = time.time()
     # print('Recursive MFGPR construction', end_rec_1 - start_rec)
 
-    for k in range(n_fid): m_rec_mf.models[k]['Gaussian_noise.variance'].fix(0)
+    # for k in range(n_fid): m_rec_mf.models[k]['Gaussian_noise.variance'].fix(0)
 
     ### Recursive HPO ###
-    m_rec_mf_pre_HPO = m_rec_mf
-    m_rec_mf.optimize_restarts(restarts=n_opt_restarts, verbose=False)
+    # m_rec_mf_pre_HPO = m_rec_mf
+    # m_rec_mf.optimize_restarts(restarts=n_opt_restarts, verbose=False)
+    # for j in range(n_fid): print(m_rec_mf.models[j])
 
     end_rec_2 = time.time()
     # print('Recursive MFGPR construction + HPO', end_rec_2 - start_rec)
@@ -137,6 +161,7 @@ def denvsrecmain(n_fid, x_dim, n):
 
     ### Prediction ###
     # mu_rec_mf, sigma_rec_mf = m_rec_mf.predict(x_plot_list)
+    # print(mu_rec_mf)
     #
     # end_rec_3 = time.time()
     # print('Recursive MFGPR construction + HPO + prediction', end_rec_3 - start_rec)
@@ -144,3 +169,5 @@ def denvsrecmain(n_fid, x_dim, n):
     # times = [np.array([end_den_1, end_den_2, end_den_3]) - start_den, np.array([end_rec_1, end_rec_2, end_rec_3]) - start_rec]
     times = [end_den_2 - start_den, end_rec_2 - start_rec]
     return times, n_fid, x_dim
+
+denvsrecmain(n_fid=n_fid, x_dim=x_dim, n=n)

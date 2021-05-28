@@ -124,7 +124,7 @@ from emukit.multi_fidelity.models.non_linear_multi_fidelity_model import make_no
 base_kernel = GPy.kern.RBF
 kernels = make_non_linear_kernels(base_kernel, 2, X_train.shape[1] - 1)
 # print(kernels)
-nonlin_mf_model = NonLinearMultiFidelityModel(X_train, Y_train, n_fidelities=2, kernels=kernels,
+nonlin_mf_model = NonLinearMultiFidelityModel(X_train, Y_train, n_fidelities=2, kernels=kernels, #n_samples=1,
                                               verbose=False, optimization_restarts=5)
 # print(nonlin_mf_model.models[0])
 # print(nonlin_mf_model.models[1])
@@ -132,6 +132,7 @@ for m in nonlin_mf_model.models:
     m.Gaussian_noise.variance.fix(0)
 
 nonlin_mf_model.optimize()
+print()
 print(nonlin_mf_model.models[0])
 print(nonlin_mf_model.models[1])
 

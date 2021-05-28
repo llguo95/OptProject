@@ -8,13 +8,18 @@ from scipy.optimize import rosen
 
 from scipy.stats import norm
 
+import GPy
 # import GPy.models
 
 # import pandas as pd
 
-a = [1, 2, 3]
-b = [4, 5, 6]
-print([(i, j) for i, j in zip(a, b)])
+# def f(x) -> str:
+#     return x
+# print(f(10) + f(10))
+
+# a = [1, 2, 3]
+# b = [4, 5, 6]
+# print([(i, j) for i, j in zip(a, b)])
 
 # a = b = 1
 # print(a, b)
