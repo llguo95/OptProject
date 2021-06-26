@@ -13,20 +13,9 @@ from emukit.multi_fidelity.models import GPyLinearMultiFidelityModel
 from emukit.multi_fidelity.convert_lists_to_array import convert_x_list_to_array, convert_xy_lists_to_arrays
 from emukit.multi_fidelity.models.non_linear_multi_fidelity_model import make_non_linear_kernels, \
     NonLinearMultiFidelityModel
-
 import test_funs
 
 np.random.seed(123)
-
-### Fidelity number ###
-n_fid = 2
-
-### Dimension number ###
-x_dim = 1
-
-### (No. of) input data points ###
-n = [5 * (n_fid - i) for i in range(n_fid)]  # Include possibility to insert training data of choice.
-
 
 def denvsrecmain(n_fid, x_dim, n):
     ##########################################
@@ -67,8 +56,8 @@ def denvsrecmain(n_fid, x_dim, n):
     X_plot_mf_list = X_plot_mf.reshape((n_fid, len(x_plot_list), x_dim + 1))
 
     ### Training data ###
-    x_train = [x_plot_list[::len(x_plot_list) // n_i] for n_i in
-               n]  # Include possibility to insert training data of choice.
+    x_train = [x_plot_list[::len(x_plot_list) // n_i] for n_i in n]
+    # Include possibility to insert training data of choice.
     y_train = [f(x_train[j], j) for j in range(n_fid)]
 
     X_train_mf, Y_train_mf = convert_xy_lists_to_arrays(x_train, y_train)
@@ -147,4 +136,8 @@ def denvsrecmain(n_fid, x_dim, n):
     return
 
 
-denvsrecmain(n_fid=n_fid, x_dim=x_dim, n=n)
+### (No. of) input data points ###
+n_fid = 2
+n = [5 * (n_fid - i) for i in range(n_fid)]  # Include possibility to insert training data of choice.
+
+denvsrecmain(n_fid=n_fid, x_dim=1, n=n)
